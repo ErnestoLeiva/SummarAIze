@@ -74,7 +74,7 @@ This project is open source and free to use under the MIT License. All derivativ
 ## <a id="contact"></a>📫 Contact
 
 For questions, suggestions, or feedback, please reach out to:
-- *(Project Lead)* Ernesto Leiva – contact@ernestoleiva.com
+- Ernesto Leiva – contact@ernestoleiva.com *(Project Lead)*
 - Claudia Saleem - clau050994@gmail.com
 - Gavin Greene - Gavingreene528@gmail.com
 - Martin Valenica - mvale148@fiu.edu
