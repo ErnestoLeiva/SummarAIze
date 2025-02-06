@@ -34,7 +34,7 @@ SummarAIze aims to solve the problem of digesting lengthy documents by leveragin
 ### 🔹 Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/SummarAIze.git
+git clone https://github.com/ErnestoLeiva/SummarAIze.git
 cd SummarAIze
 ```
 
