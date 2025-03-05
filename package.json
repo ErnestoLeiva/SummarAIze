@@ -1,0 +1,36 @@
+{
+  "name": "SummarAIze",
+  "version": "1.0.0",
+  "description": "SummarAIze is an AI-powered document processing tool built in Python. It focuses on summarizing long documents quickly and accurately, and it’s designed with extensibility in mind—allowing you to add additional features such as rewriting, table extraction, and more.",
+  "scripts": {
+    "start": "python ai-sum.py"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ErnestoLeiva/SummarAIze.git"
+  },
+  "keywords": [
+    "Artificial",
+    "Intelligence",
+    "Machine",
+    "Learning",
+    "Large",
+    "Language",
+    "Model",
+    "Natural",
+    "Language",
+    "Processing",
+    "BART",
+    "model",
+    "Deepseek",
+    "(DeepThink)",
+    "R1",
+    "model"
+  ],
+  "author": "Ernesto Leiva, Claudia Saleem, Gavin Greene, Sidney Bobadilla, Martin Valencia",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ErnestoLeiva/SummarAIze/issues"
+  },
+  "homepage": "https://github.com/ErnestoLeiva/SummarAIze#readme"
+}
