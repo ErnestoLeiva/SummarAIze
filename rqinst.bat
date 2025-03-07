@@ -68,19 +68,25 @@ IF ERRORLEVEL 1 (
 :install_requirements
 REM Install the required packages
 powershell -NoProfile -Command ^
-        "Write-Host '=========================================================' -ForegroundColor Yellow; Write-Host '[#]' -ForegroundColor Yellow -NoNewline; Write-Host ' Installing required packages from requirements.txt...'; Write-Host '=========================================================' -ForegroundColor Yellow"
+        "Write-Host '=========================================================' -ForegroundColor Yellow; " ^
+        "Write-Host '[#]' -ForegroundColor Yellow -NoNewline; Write-Host ' Installing required packages from requirements.txt...'; " ^
+        "Write-Host '=========================================================' -ForegroundColor Yellow"
 echo.
 pip install -r requirements.txt
 echo.
 IF ERRORLEVEL 1 (
     powershell -NoProfile -Command ^
-        "Write-Host '=============================================' -ForegroundColor Magenta; Write-Host '[X]' -ForegroundColor Red -NoNewline; Write-Host ' Failed to install required packages. Please try to install them manually.'; Write-Host '=============================================' -ForegroundColor Magenta"
+        "Write-Host '=============================================' -ForegroundColor Magenta; " ^
+        "Write-Host '[X]' -ForegroundColor Red -NoNewline; Write-Host ' Failed to install required packages. Please try to install them manually.'; " ^
+        "Write-Host '=============================================' -ForegroundColor Magenta"
     echo.
     set /p void_value=Press any key to close command prompt...
     goto :exit_clean
 ) ELSE (
     powershell -NoProfile -Command ^
-        "Write-Host '=============================================' -ForegroundColor Magenta; Write-Host '[√]' -ForegroundColor Green -NoNewline; Write-Host ' Required packages installed successfully.'; Write-Host '=============================================' -ForegroundColor Magenta"
+        "Write-Host '=============================================' -ForegroundColor Magenta; " ^
+        "Write-Host '[√]' -ForegroundColor Green -NoNewline; Write-Host ' Required packages installed successfully.';" ^
+        "Write-Host '=============================================' -ForegroundColor Magenta"
     echo.
     set /p void_value=Press any key to close command prompt...
     goto :exit_clean
