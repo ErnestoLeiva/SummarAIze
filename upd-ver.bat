@@ -8,15 +8,26 @@
 :: ===========================================================================
 
 @echo off
+
+REM Enable break event handling for Ctrl+C
+setlocal EnableExtensions
+set BreakHandler=exit_clean
+call :EnableBreak
+
+REM ORIGINAL Code Page is 437
+for /f "tokens=2 delims=:" %%G in ('chcp') do set "originalCP=%%G"
+chcp 65001 >nul 
+
 title VERSION UPDATER
 cls
+
 
 REM Check if package.json exists
 IF NOT EXIST package.json (
     powershell -NoProfile -Command ^
         "Write-Host '[X]' -ForegroundColor Red -NoNewline; Write-Host ' `package.json` not found!'"
     powershell -NoProfile -Command ^
-        "Write-Host '[>>]' -ForegroundColor Blue -NoNewline; Write-Host ' Please make sure you are in the correct directory.'"
+        "Write-Host '▶▶' -ForegroundColor Blue -NoNewline; Write-Host ' Please make sure you are in the correct directory.'"
     pause
     goto :exit_clean
 )
@@ -24,8 +35,15 @@ IF NOT EXIST package.json (
 
 REM Ask user for update type
 :option_selection
-powershell -NoProfile -Command "Write-Host 'Choose the type of version update:' -ForegroundColor Cyan; Write-Host '  1. ' -NoNewline; Write-Host 'Patch update' -ForegroundColor Green -NoNewline; Write-Host ' (npm version patch|E.G. 1.2.3 -> 1.2.4)' -ForegroundColor DarkGray; Write-Host '  2. ' -NoNewline; Write-Host 'Minor update' -ForegroundColor Yellow -NoNewline; Write-Host ' (npm version minor|E.G. 1.2.3 -> 1.3.0)' -ForegroundColor DarkGray; Write-Host '  3. ' -NoNewline; Write-Host 'Major update' -ForegroundColor Red -NoNewline; Write-Host ' (npm version major|E.G. 1.2.3 -> 2.0.0)' -ForegroundColor DarkGray; Write-Host '  4. ' -NoNewline; Write-Host 'Custom update' -ForegroundColor Cyan -NoNewline; Write-Host ' (npm version <custom version>|E.G. 1.2.3 -> 3.1.2)' -ForegroundColor DarkGray; Write-Host '  5. ' -NoNewline; Write-Host 'Cancel' -ForegroundColor Magenta -NoNewline; Write-Host ' (exit)' -ForegroundColor DarkGray"
-echo ------------------------------------------
+powershell -NoProfile -Command ^
+    "Write-Host 'Choose the type of version update:' -ForegroundColor Cyan; " ^
+    "Write-Host '==========================================' -ForegroundColor White; " ^
+    "Write-Host '  1. ' -NoNewline; Write-Host 'Patch update' -ForegroundColor Green -NoNewline; Write-Host ' (npm version patch|E.G. 1.2.3 -> 1.2.4)' -ForegroundColor DarkGray; " ^
+    "Write-Host '  2. ' -NoNewline; Write-Host 'Minor update' -ForegroundColor Yellow -NoNewline; Write-Host ' (npm version minor|E.G. 1.2.3 -> 1.3.0)' -ForegroundColor DarkGray; " ^
+    "Write-Host '  3. ' -NoNewline; Write-Host 'Major update' -ForegroundColor Red -NoNewline; Write-Host ' (npm version major|E.G. 1.2.3 -> 2.0.0)' -ForegroundColor DarkGray; " ^
+    "Write-Host '  4. ' -NoNewline; Write-Host 'Custom update' -ForegroundColor Cyan -NoNewline; Write-Host ' (npm version <custom version>|E.G. 1.2.3 -> 3.1.2)' -ForegroundColor DarkGray; " ^
+    "Write-Host '  5. ' -NoNewline; Write-Host 'Cancel' -ForegroundColor Magenta -NoNewline; Write-Host ' (exit)' -ForegroundColor DarkGray; " ^
+    "Write-Host '==========================================' -ForegroundColor White;"
 set /p updateType=Enter your choice (1/2/3/4/5): 
 echo.
 
@@ -40,7 +58,7 @@ if "%updateType%"=="5" goto exit_clean
 powershell -NoProfile -Command ^
         "Write-Host '[X]' -ForegroundColor Red -NoNewline; Write-Host ' Invalid choice. You must choose an option from the list of choices.'"
 echo.
-set /p void_value=Press any key to try again... (or Ctrl+C to exit)
+set /p void_value=Press any key to try again...
 cls
 goto :option_selection
 
@@ -55,7 +73,7 @@ REM ======================================================================
 REM ------------------------------
 REM PATCH UPDATE VERSION E.G. 1.2.3 -> 1.2.4
 :patch_update
-powershell -NoProfile -Command "Write-Host '[!]' -ForegroundColor Green -NoNewline; Write-Host ' Applying patch version update...'"
+powershell -NoProfile -Command "Write-Host '[√]' -ForegroundColor Green -NoNewline; Write-Host ' Applying patch version update...'"
 echo.
 
 REM run using /c so that it terminates its own process, redirecting both STDOUT and STDERR to temp.txt 
@@ -87,7 +105,7 @@ goto show_version
 REM ------------------------------
 REM MINOR UPDATE VERSION E.G. 1.2.3 -> 1.3.0
 :minor_update
-powershell -NoProfile -Command "Write-Host '[!]' -ForegroundColor Green -NoNewline; Write-Host ' Applying minor version update...'"
+powershell -NoProfile -Command "Write-Host '[√]' -ForegroundColor Green -NoNewline; Write-Host ' Applying minor version update...'"
 echo.
 
 REM run using /c so that it terminates its own process, redirecting both STDOUT and STDERR to temp.txt 
@@ -118,7 +136,7 @@ goto show_version
 REM ------------------------------
 REM MAJOR UPDATE VERSION E.G. 1.2.3 -> 2.0.0
 :major_update
-powershell -NoProfile -Command "Write-Host '[!]' -ForegroundColor Green -NoNewline; Write-Host ' Applying major version update...'"
+powershell -NoProfile -Command "Write-Host '[√]' -ForegroundColor Green -NoNewline; Write-Host ' Applying major version update...'"
 echo.
 
 REM run using /c so that it terminates its own process, redirecting both STDOUT and STDERR to temp.txt 
@@ -169,7 +187,7 @@ IF ERRORLEVEL 1 (
 )
 endlocal & set "customVersion=%customVersion%" 
 
-powershell -NoProfile -Command "Write-Host '[!]' -ForegroundColor Green -NoNewline; Write-Host ' Applying custom version update...'"
+powershell -NoProfile -Command "Write-Host '[√]' -ForegroundColor Green -NoNewline; Write-Host ' Applying custom version update...'"
 echo.
 
 REM run using /c so that it terminates its own process, redirecting both STDOUT and STDERR to temp.txt 
@@ -203,12 +221,25 @@ REM SHOW THE NEW VERSION NUMBER
 IF "%NEW_VERSION%"=="" (
     powershell -NoProfile -Command "Write-Host '[X]' -ForegroundColor Red -NoNewline; Write-Host ' No version number returned.'"
 ) ELSE (
-    powershell -NoProfile -Command "Write-Host '[!]' -ForegroundColor Green -NoNewline; Write-Host ' Version number updated successfully.'"
+    powershell -NoProfile -Command "Write-Host '[√]' -ForegroundColor Green -NoNewline; Write-Host ' Version number updated successfully.'"
     echo.
     echo New version: %NEW_VERSION%
 )
 pause
 
 :exit_clean
+break off
 endlocal
+chcp %originalCP% >nul
 exit /b
+
+:EnableBreak
+REM Enable break event handling
+if "%BreakHandler%"=="" (
+    echo Break handler not defined.
+    goto :EOF
+)
+REM Trap Ctrl+C and redirect to the handler
+break on
+trap "%BreakHandler%" SIGINT
+goto :EOF

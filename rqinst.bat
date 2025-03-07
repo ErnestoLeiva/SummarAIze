@@ -7,9 +7,12 @@
 :: It uses pip to install the packages listed in requirements.txt
 :: ===========================================================================
 
-
-
 @echo off
+
+REM ORIGINAL Code Page is 437
+for /f "tokens=2 delims=:" %%G in ('chcp') do set "originalCP=%%G"
+chcp 65001 >nul 
+
 title REQUIREMENTS INSTALLER
 cls
 
@@ -19,12 +22,12 @@ IF NOT EXIST requirements.txt (
     powershell -NoProfile -Command ^
         "Write-Host '[X]' -ForegroundColor Red -NoNewline; Write-Host ' `requirements.txt` not found!'"
     powershell -NoProfile -Command ^
-        "Write-Host '[>>]' -ForegroundColor Blue -NoNewline; Write-Host ' Please make sure you are in the correct directory.'"
+        "Write-Host '▶▶' -ForegroundColor Blue -NoNewline; Write-Host ' Please make sure you are in the correct directory.'"
     pause
     goto :exit_clean
 ) ELSE (
     powershell -NoProfile -Command ^
-        "Write-Host '[!]' -ForegroundColor Green -NoNewline; Write-Host ' `requirements.txt` found.'"
+        "Write-Host '[√]' -ForegroundColor Green -NoNewline; Write-Host ' `requirements.txt`' -ForegroundColor Yellow -NoNewLine; Write-Host ' FOUND:' -NoNewLine; Write-Host ' "%~dp0requirements.txt"' -ForegroundColor Cyan"
     echo.
 )
 
@@ -42,7 +45,7 @@ IF ERRORLEVEL 1 (
     goto :exit_clean
 ) ELSE (
     powershell -NoProfile -Command ^
-        "Write-Host '[!]' -ForegroundColor Green -NoNewline; Write-Host ' Python is installed.'"
+        "Write-Host '[√]' -ForegroundColor Green -NoNewline; Write-Host ' Python is installed.'"
     echo.
 )
 
@@ -56,7 +59,7 @@ IF ERRORLEVEL 1 (
     goto :install_pip
 ) ELSE (
     powershell -NoProfile -Command ^
-        "Write-Host '[!]' -ForegroundColor Green -NoNewline; Write-Host ' Pip is installed.'"
+        "Write-Host '[√]' -ForegroundColor Green -NoNewline; Write-Host ' Pip is installed.'"
     echo.
     goto :install_requirements
 )
@@ -74,14 +77,19 @@ IF ERRORLEVEL 1 (
         "Write-Host '=============================================' -ForegroundColor Magenta; Write-Host '[X]' -ForegroundColor Red -NoNewline; Write-Host ' Failed to install required packages. Please try to install them manually.'; Write-Host '=============================================' -ForegroundColor Magenta"
     echo.
     set /p void_value=Press any key to close command prompt...
+    goto :exit_clean
 ) ELSE (
     powershell -NoProfile -Command ^
-        "Write-Host '=============================================' -ForegroundColor Magenta; Write-Host '[!]' -ForegroundColor Green -NoNewline; Write-Host ' Required packages installed successfully.'; Write-Host '=============================================' -ForegroundColor Magenta"
+        "Write-Host '=============================================' -ForegroundColor Magenta; Write-Host '[√]' -ForegroundColor Green -NoNewline; Write-Host ' Required packages installed successfully.'; Write-Host '=============================================' -ForegroundColor Magenta"
     echo.
     set /p void_value=Press any key to close command prompt...
+    goto :exit_clean
 )
-goto :exit_clean
 
+
+:exit_clean
+chcp %originalCP% >nul
+exit /b
 
 :install_pip
 powershell -NoProfile -Command ^
@@ -94,11 +102,5 @@ IF ERRORLEVEL 1 (
     goto :exit_clean
 )
 powershell -NoProfile -Command ^
-    "Write-Host '[!]' -ForegroundColor Green -NoNewline; Write-Host ' Pip installed successfully.'"
+    "Write-Host '[√]' -ForegroundColor Green -NoNewline; Write-Host ' Pip installed successfully.'"
 goto :install_requirements
-
-
-:exit_clean
-exit /b
-
-:: -------------- End of script --------------
