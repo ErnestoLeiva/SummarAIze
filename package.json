@@ -1,6 +1,6 @@
 {
   "name": "SummarAIze",
-  "version": "1.1.0",
+  "version": "1.0.1",
   "description": "SummarAIze is an AI-powered document processing tool built in Python. It focuses on summarizing long documents quickly and accurately, and it’s designed with extensibility in mind—allowing you to add additional features such as rewriting, table extraction, and more.",
   "scripts": {
     "start": "python ai-sum.py"
