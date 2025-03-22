@@ -23,7 +23,7 @@ def main():
     ### Validate input text file to summarize
     input_path = os.path.normpath(args.summarize)
     if not os.path.isfile(input_path):
-        alt_path = os.path.join(os.getcwd(), input_path.lstrip("\\/"))
+        alt_path = os.path.join(os.getcwd(), input_path.lstrip(r"\/"))
         if os.path.isfile(alt_path):
             args.summarize = alt_path
         else:
