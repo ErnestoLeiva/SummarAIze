@@ -1,72 +1,66 @@
 import sys
-import argparse
-from custom_classes.ANSI_helpers import Symbols as symb
-from custom_classes.ASCII_art import ASCII_art as ascii
-from custom_classes.Timer import Timer as timer
-
-def parse_args() -> argparse.Namespace:
-    """Parse command line arguments."""
-    parser = argparse.ArgumentParser(
-        usage='%(prog)s [-h, --help], [-s, --summarize <file_path>], [-o, --output <file_path>], [-m, --model <model_name> | default: BART], [-na, --no-ansi], [-gm, --gui-mode]',
-        description= ascii.splash_title,
-        formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, max_help_position=45)
-    )
-    
-    parser.add_argument("-s", "--summarize", metavar="<file_path>", type=str, required=True, help="File to summarize [*required]")
-    parser.add_argument("-o", "--output", metavar="<file_path>", type=str, required=False, help="Path to store summary (optional)")
-    parser.add_argument("-m", "--model", metavar="<model_name>", type=str, required=False, default="BART", help="Specify which model to use (optional)")
-    parser.add_argument("-na", "--no-ansi", action="store_true", required=False, help="Disable ANSI escape codes in output (optional)")
-    parser.add_argument("-gm", "--gui-mode", action="store_true", required=False, help="Enable gui mode for controlled output (optional)")
-    return parser.parse_args()
+import os
+from utils.ansi_helpers import Printer
+from utils.timer import Timer as timer
+from utils.arg_parser import parse_args
 
 def main():
     """Main function to summarize text."""
     
-    # parse args and store in args variable
+    ### Parse args and store in args variable
     args = parse_args()
 
 
-    # check if --no-ansi is passed and if so call static disabel method in ansi helper class
-    if args.no_ansi:
-        symb.disable()
-    else:
-        print(f"{symb.SUCCESS}SummarAIzing...\n")
+    ### Initliaze the printer object from ansi_helpers
+    p = Printer(no_ansi=args.no_ansi)
 
 
-    from custom_classes.Models import Models # i start this import here because it helps with improve performance for help screen flag [-h, --help]
-    # check if manual model is passed and if so check if it is valid
-    if args.model:
-        model_key = args.model.upper()
-        if model_key not in Models.MODEL_MAP:
-            print(f'{symb.ERROR}Invalid model name. Available models: {", ".join(Models.MODEL_MAP.keys())}')
-            sys.exit(1)
-        selected_model = Models.MODEL_MAP[model_key]
-    else:
-        selected_model = Models.MODEL_MAP["BART"]
+    ### Check if --no-ansi is passed and if so call static disabel method in ansi helper class
+    if not args.no_ansi:
+        p.success(f"SummarAIzing...\n")
 
 
-    # Load the model and tokenizer
+    ### Validate input text file to summarize
+    if not os.path.isfile(args.summarize):
+        alt_path = os.path.join(os.curdir, args.summarize)
+        if os.path.isfile(alt_path):
+            args.summarize = alt_path
+        else:
+            p.error(f"File not found: {args.summarize}")
+
+    ## If its valid then we will go ahead and yeah just read it
+    with open(args.summarize, 'r', encoding='utf-8') as file:
+        text = file.read()
+
+
+    ### Import the Models class from custom_classes.Models
+    # i start this import here because it helps with improve performance for help screen flag [-h, --help]
     try:
-        tokenizer, model = Models.use_raw(Models.MODEL_MAP[args.model.upper()])
+        from utils.models import Models 
+    except ImportError as e:
+        p.error(f"Error importing Models class: {str(e)}")
     except Exception as e:
-        print(f"{symb.ERROR}Error loading model and tokenizer: {str(e)}")
-        sys.exit(1)
+        p.error(f"Unexpected error importing Models class: {str(e)}")
+    
+
+    ### Load the model and tokenizer
+    try:
+        selected_model = Models.MODEL_MAP[args.model.upper()]
+        tokenizer, model = Models.use_raw(selected_model)
+    except Exception as e:
+        p.error(f"Error loading model and tokenizer: {str(e)}")
 
 
-    # Input text to summarize ############### !!!!!!!!!!!!!! CHANGE TO FILE INPUT !!!!!!!!!!!!! ################
-    text = args.summarize
-
-    # Start the text summarization process and time it
+    ### Start the text summarization process and time it
     with timer("Text Summarization", args.gui_mode, args.no_ansi):
         try:
             summary = Models.summarAIze(tokenizer, model, text)
         except Exception as e:
-            print(f"{symb.ERROR}Error summarizing text: {str(e)}")
-            sys.exit(1)
+            p.error(f"Error summarizing text: {str(e)}")
 
     # print the results
-    if not args.no_ansi:
-        print(f"{symb.INFO}SummarAIzation: {summary}")
+    if not args.gui_mode:
+        p.info(f"SummarAIzation: {summary}")
     else:
         print(f"{summary}")
     sys.exit(0)

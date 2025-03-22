@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox, ttk
 from tkinter.scrolledtext import ScrolledText
 from ttkthemes import ThemedTk
-from custom_classes.ttk_scrollbar import ThemedScrolledText
+from features.GUI.ttk_scrollbar import ThemedScrolledText
 import subprocess
 import sys
 import os

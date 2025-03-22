@@ -1,9 +1,9 @@
 {
-  "name": "SummarAIze",
+  "name": "summaraize",
   "version": "1.0.1",
-  "description": "SummarAIze is an AI-powered document processing tool built in Python. It focuses on summarizing long documents quickly and accurately, and it’s designed with extensibility in mind—allowing you to add additional features such as rewriting, table extraction, and more.",
+  "description": "SummarAIze is an AI-powered legal document summarization tool built in Python. Designed to help legal professionals, students, and researchers quickly extract key information from long contracts and legal texts, SummarAIze runs entirely offline and is built with a modular architecture for future expansion.",
   "scripts": {
-    "start": "python ai-sum.py"
+    "start": "python ai-sum.py -h"
   },
   "repository": {
     "type": "git",
@@ -21,11 +21,10 @@
     "Language",
     "Processing",
     "BART",
-    "model",
-    "Deepseek",
-    "(DeepThink)",
-    "R1",
-    "model"
+    "DistilBART",
+    "Google-T5-Small",
+    "HuggingFace",
+    "Transformers"
   ],
   "author": "Ernesto Leiva, Claudia Saleem, Gavin Greene, Sidney Bobadilla, Martin Valencia",
   "license": "MIT",
