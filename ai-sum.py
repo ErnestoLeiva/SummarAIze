@@ -1,95 +1,72 @@
-import os
-os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # Workaround for a known issue with TensorFlow and OneDNN optimizations
-
-from transformers import AutoModelForSeq2SeqLM, AutoModelForCausalLM, AutoTokenizer, pipeline
 import sys
 import argparse
+from custom_classes.ANSI_helpers import Symbols as symb
+from custom_classes.ASCII_art import ASCII_art as ascii
+from custom_classes.Timer import Timer as timer
 
-
-splash_title = """\
-╔══════════════════════════════════════════════════════════════════════════════════╗
-║███████╗██╗   ██╗███╗   ███╗███╗   ███╗ █████╗ ██████╗  █████╗ ██╗███████╗███████╗║
-║██╔════╝██║   ██║████╗ ████║████╗ ████║██╔══██╗██╔══██╗██╔══██╗██║╚══███╔╝██╔════╝║
-║███████╗██║   ██║██╔████╔██║██╔████╔██║███████║██████╔╝███████║██║  ███╔╝ █████╗  ║
-║╚════██║██║   ██║██║╚██╔╝██║██║╚██╔╝██║██╔══██║██╔══██╗██╔══██║██║ ███╔╝  ██╔══╝  ║
-║███████║╚██████╔╝██║ ╚═╝ ██║██║ ╚═╝ ██║██║  ██║██║  ██║██║  ██║██║███████╗███████╗║
-║╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚══════╝╚══════╝║
-╟────────────────────────────────────────────────────────────────┐ est. 2025 ┆ FIU ║
-║        Summarize text using AI.                                └─────────────────╢
-╚══════════════════════════════════════════════════════════════════════════════════╝\
-"""
-
-
-def main():
+def parse_args() -> argparse.Namespace:
+    """Parse command line arguments."""
     parser = argparse.ArgumentParser(
-        usage='%(prog)s [-h, --help] --summarize <input_text> [--no-ansi]',
-        description= splash_title,
+        usage='%(prog)s [-h, --help], [-s, --summarize <file_path>], [-o, --output <file_path>], [-m, --model <model_name> | default: BART], [-na, --no-ansi], [-gm, --gui-mode]',
+        description= ascii.splash_title,
         formatter_class=lambda prog: argparse.RawTextHelpFormatter(prog, max_help_position=45)
     )
     
-    parser.add_argument("-s", "--summarize", metavar="<input_text>", type=str, required=True, help="Text to summarize [*required]")
-    parser.add_argument("--no-ansi", action="store_true", help="Disable ANSI escape codes in output (optional)")
-    args = parser.parse_args()
+    parser.add_argument("-s", "--summarize", metavar="<file_path>", type=str, required=True, help="File to summarize [*required]")
+    parser.add_argument("-o", "--output", metavar="<file_path>", type=str, required=False, help="Path to store summary (optional)")
+    parser.add_argument("-m", "--model", metavar="<model_name>", type=str, required=False, default="BART", help="Specify which model to use (optional)")
+    parser.add_argument("-na", "--no-ansi", action="store_true", required=False, help="Disable ANSI escape codes in output (optional)")
+    parser.add_argument("-gm", "--gui-mode", action="store_true", required=False, help="Enable gui mode for controlled output (optional)")
+    return parser.parse_args()
 
-    # ANSI escape codes
-    RED = "\033[91m"
-    GREEN = "\033[92m"
-    CYAN = "\033[96m"
-    RESET = "\033[0m"
+def main():
+    """Main function to summarize text."""
+    
+    # parse args and store in args variable
+    args = parse_args()
 
-    # ANSI color coded symbols
-    ERROR= f"{RED}✗ {RESET}"
-    INFO= f"{CYAN}▶▶ {RESET}"
-    SUCCESS= f"{GREEN}√ {RESET}"
 
-    # just sets all the variables that use ANSI escape codes to empty strings if --no-ansi is passed
+    # check if --no-ansi is passed and if so call static disabel method in ansi helper class
     if args.no_ansi:
-        RED = GREEN = CYAN = RESET = ERROR = INFO = SUCCESS = ""
+        symb.disable()
+    else:
+        print(f"{symb.SUCCESS}SummarAIzing...\n")
 
-    if not args.no_ansi:
-        print(f"{SUCCESS}SummarAIzing text...\n")
+
+    from custom_classes.Models import Models # i start this import here because it helps with improve performance for help screen flag [-h, --help]
+    # check if manual model is passed and if so check if it is valid
+    if args.model:
+        model_key = args.model.upper()
+        if model_key not in Models.MODEL_MAP:
+            print(f'{symb.ERROR}Invalid model name. Available models: {", ".join(Models.MODEL_MAP.keys())}')
+            sys.exit(1)
+        selected_model = Models.MODEL_MAP[model_key]
+    else:
+        selected_model = Models.MODEL_MAP["BART"]
+
 
     # Load the model and tokenizer
     try:
-        model_name = "facebook/bart-large-cnn"
-        model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-        tokenizer = AutoTokenizer.from_pretrained(model_name)
-
+        tokenizer, model = Models.use_raw(Models.MODEL_MAP[args.model.upper()])
     except Exception as e:
-        print(f"{ERROR}Error loading model and tokenizer: {str(e)}")
+        print(f"{symb.ERROR}Error loading model and tokenizer: {str(e)}")
         sys.exit(1)
 
-    # Input text to summarize
+
+    # Input text to summarize ############### !!!!!!!!!!!!!! CHANGE TO FILE INPUT !!!!!!!!!!!!! ################
     text = args.summarize
 
+    # Start the text summarization process and time it
+    with timer("Text Summarization", args.gui_mode, args.no_ansi):
+        try:
+            summary = Models.summarAIze(tokenizer, model, text)
+        except Exception as e:
+            print(f"{symb.ERROR}Error summarizing text: {str(e)}")
+            sys.exit(1)
 
-    try:
-        # Tokenize the input text
-        inputs = tokenizer(
-            text, 
-            return_tensors="pt", 
-            max_length=1024, 
-            truncation=True
-        )
-
-        # Generate summary
-        summary_ids = model.generate(
-            inputs["input_ids"],
-            max_length=150,
-            min_length=40,
-            length_penalty=2.0,
-            num_beams=4,
-            early_stopping=True
-        )
-
-        # Decode the summary
-        summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
-    except Exception as e:
-        print(f"{ERROR}Error summarizing text: {str(e)}")
-        sys.exit(1)
-
+    # print the results
     if not args.no_ansi:
-        print(f"{INFO}SummarAIzation: {summary}")
+        print(f"{symb.INFO}SummarAIzation: {summary}")
     else:
         print(f"{summary}")
     sys.exit(0)
