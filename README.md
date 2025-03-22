@@ -120,7 +120,9 @@ python ai-sum.py --summarize "C:/Users/Roary/documents/mascot.txt"
 ```
 This command will process the specified file and output a concise summary to the terminal.
 
+
 <div align="center">
+  <h3>The usage screen showing available flags</h3><br />
   <img src="https://i.imgur.com/ZDYyQLQ.png" alt="summarAIze">
 </div>
 
