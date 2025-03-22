@@ -21,13 +21,16 @@ def main():
 
 
     ### Validate input text file to summarize
-    if not os.path.isfile(args.summarize):
-        alt_path = os.path.join(os.curdir, args.summarize)
+    input_path = os.path.normpath(args.summarize)
+    if not os.path.isfile(input_path):
+        alt_path = os.path.join(os.getcwd(), input_path.lstrip("\\/"))
         if os.path.isfile(alt_path):
             args.summarize = alt_path
         else:
             p.error(f"File not found: {args.summarize}")
-
+    else:
+        args.summarize = input_path
+    
     ## If its valid then we will go ahead and yeah just read it
     with open(args.summarize, 'r', encoding='utf-8') as file:
         text = file.read()
