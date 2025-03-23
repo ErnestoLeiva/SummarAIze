@@ -23,13 +23,39 @@ def verify_file_path(p: Printer, file_path: str) -> str:
 
 def read_file(p: Printer, file_path: str) -> (str | None):
     """Read the content of the file and return as string."""
+    
     try:
-        p.info(f"Reading file...")
-        with open(file_path, 'r', encoding='utf-8') as file:
-            text = file.read()
-            if not text.strip():
-                p.error(f"File is empty: {file_path}")
-            p.success(f"File read successfully\n")
-            return text
+        p.info("Reading file...")
+        ext = os.path.splitext(file_path)[1].lower() # index 1 because 0 is the file name
+
+        # TEXT FILES
+        if ext == ".txt":
+            with open(file_path, "r", encoding="utf-8") as file:
+                text = file.read()
+
+        # PDF FILES
+        elif ext == ".pdf":
+            from PyPDF2 import PdfReader
+            reader = PdfReader(file_path)
+            text = "\n".join([page.extract_text() or "" for page in reader.pages])
+
+        # WORD/DOCX FILES
+        elif ext == ".docx":
+            from docx import Document
+            doc = Document(file_path)
+            text = "\n".join([para.text for para in doc.paragraphs])
+
+        # OTHER? - unsupported file types
+        else:
+            p.error(f"Unsupported file type: {ext}")
+
+        # SUPPORTED BUT EMPTY FILES
+        if not text.strip():
+            p.error(f"File is empty or contains no readable text: {file_path}")
+
+        p.success("File read successfully\n")
+        return text
+    except ImportError as e:
+        p.error(f"Required library not found: {str(e)}")
     except Exception as e:
         p.error(f"Error reading file: {str(e)}")
