@@ -24,7 +24,7 @@ def verify_file_path(p: Printer, file_path: str) -> str:
 def read_file(p: Printer, file_path: str) -> (str | None):
     """Read the content of the file and return as string."""
     try:
-        p.info(f"Reading file")
+        p.info(f"Reading file...")
         with open(file_path, 'r', encoding='utf-8') as file:
             text = file.read()
             if not text.strip():
