@@ -121,6 +121,8 @@ This command will process the specified file and output a concise summary to the
 <div align="center">
   <h3>The usage screen showing available flags</h3><br />
   <img src="https://i.imgur.com/iaetR92.png" alt="summarAIze">
+  <h3>An example using the provided test file 'roman.txt'</h3>
+  <img src="https://i.imgur.com/i3nWZfI.png" alt="summarAIze example with roman.txt">
 </div>
 
 ## <a id="roadmap--milestones"></a>🚀 Roadmap & Milestones
