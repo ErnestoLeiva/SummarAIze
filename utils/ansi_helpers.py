@@ -1,4 +1,15 @@
 import sys
+import os
+
+def should_disable_ansi() -> bool:
+    """Check if ANSI escape codes should be disabled. \n
+    This is typically the case on Windows systems without ANSICON support."""
+    return (
+        os.name == "nt" and
+        not os.environ.get("ANSICON") and
+        not os.environ.get("WT_SESSION") and
+        not os.environ.get("TERM_PROGRAM")
+    )
 
 class Colors:
     """ANSI escape codes for colors."""
@@ -36,7 +47,7 @@ class Printer:
         :param gui_mode: If True, disable all messages. \n"""
         self.no_ansi = no_ansi
         self.gui_mode = gui_mode
-        if self.no_ansi:
+        if self.no_ansi or should_disable_ansi():
             Symbols.disable()
 
     def success(self, message: str) -> None:
