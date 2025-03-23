@@ -14,7 +14,7 @@ def main() -> None:
     args = parse_args()
 
     ### Initliaze the printer object from ansi_helpers
-    p: Printer = Printer(no_ansi=args.no_ansi)
+    p: Printer = Printer(no_ansi=args.no_ansi, gui_mode=args.gui_mode)
 
     ### Alert the user that the script is starting 
     p.success(f"SummarAIzing...\tv{get_version()}\n")
