@@ -6,14 +6,17 @@ class Colors:
     GREEN = "\033[92m"
     CYAN = "\033[96m"
     YELLOW = "\033[93m"
+    BLUE = "\033[94m"
+    MAGENTA = "\033[95m"
     RESET = "\033[0m"
 
 class Symbols:
     """ANSI escape codes for symbols."""
     ERROR = f"{Colors.RED}✗ {Colors.RESET}"
-    INFO = f"{Colors.CYAN}▶▶ {Colors.RESET}"
+    RESULT = f"{Colors.CYAN}▶▶ {Colors.RESET}"
     SUCCESS = f"{Colors.GREEN}√ {Colors.RESET}"
     WARNING = f"{Colors.YELLOW}⚠ {Colors.RESET}"
+    INFO = f"{Colors.BLUE}ℹ {Colors.RESET}"
 
     @staticmethod
     def disable() -> None:
@@ -25,26 +28,49 @@ class Symbols:
 
 class Printer:
     """Printer class to print specific types of messages."""
-    def __init__(self, no_ansi: bool = False) -> None:
-        """Initialize the printer with ANSI color codes."""
+    
+    def __init__(self, no_ansi: bool = False, gui_mode: bool = False) -> None:
+        """Initialize the printer with ANSI color codes. \n
+        Used to print messages with specific ANSI color codes and preceding symbols. \n
+        :param no_ansi: If True, disable ANSI color codes. \n
+        :param gui_mode: If True, disable all messages. \n"""
         self.no_ansi = no_ansi
+        self.gui_mode = gui_mode
         if self.no_ansi:
             Symbols.disable()
 
     def success(self, message: str) -> None:
-        """Print a success message."""
+        """Print a success message. \n
+        Ignores the message if in *GUI mode*."""
+        if self.gui_mode:
+            return
         print(f"{Symbols.SUCCESS}{message}")
 
     def error(self, message: str, exit_code: int = 1) -> None:
         """Print an error message. \n
-        **Note**: This will exit the program with a status code of 1."""
-        print(f"{Symbols.ERROR}{message}")
+        **Note**: This will exit the program with a status code of 1.\n
+        Ignores the message if in *GUI mode*."""
+        if not self.gui_mode:
+            print(f"{Symbols.ERROR}{message}")
         sys.exit(exit_code)
 
     def info(self, message: str) -> None:
-        """Print an info message."""
+        """Print an info message.\n
+        Ignores the message if in *GUI mode*."""
+        if self.gui_mode:
+            return
         print(f"{Symbols.INFO}{message}")
     
     def warning(self, message: str) -> None:
-        """Print a warning message."""
+        """Print a warning message.\n
+        Ignores the message if in *GUI mode*."""
+        if self.gui_mode:
+            return
         print(f"{Symbols.WARNING}{message}")
+
+    def result(self, message: str) -> None:
+        """Print a result message.\n
+        Ignores the message if in *GUI mode*."""
+        if self.gui_mode:
+            return
+        print(f"{Symbols.RESULT}{message}")

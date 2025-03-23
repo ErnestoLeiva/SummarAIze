@@ -1,8 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, ttk
-from tkinter.scrolledtext import ScrolledText
 from ttkthemes import ThemedTk
-from features.GUI.ttk_scrollbar import ThemedScrolledText
+from ttk_scrollbar import ThemedScrolledText
 import subprocess
 import sys
 import os
@@ -80,7 +79,7 @@ class SummarAIzeApp:
             # text=True to decode the stdout as text (and not bytes)
             # check=True to raise an exception if the command fails
             result = subprocess.run(
-                [sys.executable, script_path, '--summarize', input_text, '--no-ansi'],
+                [sys.executable, script_path, '--summarize', input_text, '--gui-mode', '--no-ansi'],
                 capture_output=True, text=True, check=True
             )
 
