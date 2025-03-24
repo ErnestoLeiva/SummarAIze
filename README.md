@@ -63,7 +63,7 @@ Legal documents are notoriously lengthy and complex. SummarAIze was created to:
 
 ### 🔹 Prerequisites
 
-- Python 3.7+
+- Python 3.9+
 - [pip](https://pip.pypa.io/en/stable/)
 
 ### 🔹 Clone the Repository
