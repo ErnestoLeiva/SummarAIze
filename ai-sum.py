@@ -7,12 +7,9 @@ from utils.version_helper import get_version
 from utils.models import Models
 
 
-def main() -> None:
+def main(args) -> None:
     """Main function to summarize text."""
     
-    ### Parse args and store in args variable
-    args = parse_args()
-
     ### Initliaze the printer object from ansi_helpers
     p: Printer = Printer(no_ansi=args.no_ansi, gui_mode=args.gui_mode)
 
@@ -29,7 +26,8 @@ def main() -> None:
 
     ### Load the model and tokenizer
     selected_model = Models.MODEL_MAP[args.model.upper()]
-    tokenizer, model = Models.use_raw(p, selected_model)
+    with timer("Model Loading", args.gui_mode, args.no_ansi):
+        tokenizer, model = Models.use_raw(p, selected_model)
 
     ### Start the text summarization process and time it
     with timer("Text Summarization", args.gui_mode, args.no_ansi):
@@ -37,7 +35,7 @@ def main() -> None:
 
     ### print the results
     if not args.gui_mode and not args.output: # Standard CLI mode
-        p.result(f"SummarAIzation: {summary}")
+        p.result(f"SummarAIzation: {summary}\n")
     
     elif args.output:   # Output flag is set
         write_file(p, args.output, summary)
@@ -48,4 +46,10 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    
+    ### Parse args and store in args variable
+    args = parse_args()
+    
+    ### Run main function and time total run time
+    with timer("Total Run Time", args.gui_mode, args.no_ansi):
+        main(args)

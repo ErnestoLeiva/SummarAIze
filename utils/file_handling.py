@@ -158,6 +158,6 @@ def write_file(p: Printer, file_path: str, content: str) -> None:
         with open(file_path, "w", encoding="utf-8") as file:
             file.write(content)
         
-        p.success(f"SummarAIzation complete. Output saved to {file_path}")
+        p.success(f"SummarAIzation complete. Output saved to {file_path}\n")
     except Exception as e:
         p.error(f"Error writing file: {str(e)}")
