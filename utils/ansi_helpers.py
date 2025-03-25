@@ -29,6 +29,7 @@ class Symbols:
     RESULT = f"{Colors.CYAN}▶▶ {Colors.RESET}"
     SUCCESS = f"{Colors.GREEN}√ {Colors.RESET}"
     WARNING = f"{Colors.YELLOW}⚠ {Colors.RESET}"
+    TIMER = f"{Colors.MAGENTA}⧗ {Colors.RESET}"
     INFO = f"{Colors.BLUE}ℹ {Colors.RESET}"
 
     @staticmethod
@@ -37,6 +38,7 @@ class Symbols:
         Symbols.SUCCESS = ""
         Symbols.ERROR = ""
         Symbols.INFO = ""
+        Symbols.TIMER = ""
         Symbols.WARNING = ""
 
 class Printer:
@@ -46,6 +48,7 @@ class Printer:
         """
         Initialize the printer with ANSI color codes. \n
         Used to print messages with specific ANSI color codes and preceding symbols. \n
+        *** \n
         :param no_ansi: If True, disable ANSI color codes. \n
         :param gui_mode: If True, disable all messages. \n
         """
@@ -53,6 +56,15 @@ class Printer:
         self.gui_mode = gui_mode
         if self.no_ansi or should_disable_ansi():
             Symbols.disable()
+
+    def normal(self, message: str) -> None:
+        """
+        Print a normal message with no ANSI coloring or special characters. \n
+        Ignores the message if in *GUI mode*.
+        """
+        if self.gui_mode:
+            return
+        print(f"{message}")
 
     def success(self, message: str) -> None:
         """
@@ -81,6 +93,15 @@ class Printer:
         if self.gui_mode:
             return
         print(f"{Symbols.INFO}{message}")
+
+    def timer(self, message: str) -> None:
+        """
+        Print a timer message.\n
+        Ignores the message if in *GUI mode*.
+        """
+        if self.gui_mode:
+            return
+        print(f"{Symbols.TIMER}{message}")
     
     def warning(self, message: str) -> None:
         """

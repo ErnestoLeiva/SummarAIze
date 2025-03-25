@@ -4,8 +4,8 @@ import os
 def get_version() -> str:
     """
     Get the current version of the package from the *package.json* file. \n
-    This function is useful for displaying the version in the CLI or GUI.
-    
+    This function is useful for displaying the version in the CLI or GUI. \n
+    ***
     Returns:
         str:
             - The version of the package as a string.

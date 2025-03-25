@@ -1,0 +1,17 @@
+{
+    "BART": {
+      "hf_path": "facebook/bart-large-cnn",
+      "task": "summarization",
+      "token_limit": 1024
+    },
+    "DISTILBART": {
+      "hf_path": "sshleifer/distilbart-cnn-12-6",
+      "task": "summarization",
+      "token_limit": 1024
+    },
+    "T5": {
+      "hf_path": "google-t5/t5-small",
+      "task": "translation",
+      "token_limit": 512
+    }
+  }

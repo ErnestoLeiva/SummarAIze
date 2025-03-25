@@ -14,7 +14,8 @@ def main(args) -> None:
     p: Printer = Printer(no_ansi=args.no_ansi, gui_mode=args.gui_mode)
 
     ### Alert the user that the script is starting 
-    p.success(f"SummarAIzing...\tv{get_version()}\n")
+    p.normal(f"[v{get_version()} - Using {args.model}]")
+    p.success(f"SummarAIzing...\n")
 
     ### Check if input file exists and if output directory exists, if not then print error message and exit
     args.summarize = verify_file_path(p, args.summarize)
@@ -25,7 +26,7 @@ def main(args) -> None:
     text: (str | None) = read_file(p, args.summarize)
 
     ### Load the model and tokenizer
-    selected_model = Models.MODEL_MAP[args.model.upper()]
+    selected_model = str(args.model)
     with timer("Model Loading", args.gui_mode, args.no_ansi):
         tokenizer, model = Models.use_raw(p, selected_model)
 
@@ -50,6 +51,9 @@ if __name__ == "__main__":
     ### Parse args and store in args variable
     args = parse_args()
     
+    ### Load models config
+    Models.load_config()
+
     ### Run main function and time total run time
     with timer("Total Run Time", args.gui_mode, args.no_ansi):
         main(args)

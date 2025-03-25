@@ -1,63 +1,77 @@
 import os
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'  # Workaround for a known issue with TensorFlow and OneDNN optimizations
 from utils.ansi_helpers import Printer
-
-# workaround for NameError exception on runtime.
-# happens with type checking for summarAIze function since im defining the types for the parameters before its actually imported
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING # used for NameError runtime exception 
 if TYPE_CHECKING:
     from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 class Models:
     """Handles loading models in pipeline or raw format.\n
-    **Models**: \n
-    - *BART*: facebook/bart-large-cnn \n
-    - *DistilBART*: sshleifer/distilbart-cnn-12-6 \n
-    - *T5*: google-t5/t5-small \n
+    ***
+    **Model Support**:
+    - BART: facebook/bart-large-cnn
+    - DistilBART: sshleifer/distilbart-cnn-12-6
+    - T5: google-t5/t5-small
+    
+    **Model Data (from model_registry.json)**:
+    - hf_path: Hugging Face model identifier (e.g. "facebook/bart-large-cnn")
+    - token_limit: Max input token length supported by each model (e.g. 1024 for BART)
+    - task: 
+        - "summarization" for BART and DistilBART
+        - "translation" for T5
+
+    **Configurable Keys (from summarization.json)**:
+    - TOKENIZER_DUMMY_MAX: Dummy max to suppress tokenizer warnings
+    - DEFAULT_SUMMARY_RATIO: Target summary length as % of input
+    - DEFAULT_MIN_TOKENS: Minimum tokens allowed for a summary
+    - DEFAULT_OVERLAP_RATIO: Chunk overlap % (for long input splitting)
+    - DEFAULT_LENGTH_PENALTY_THRESHOLD: Controls when length_penalty becomes 2.0
+    - DEFAULT_DO_SAMPLE: Enable sampling mode
+    - DEFAULT_NUM_BEAMS: Number of beams for beam search
+    - DEFAULT_EARLY_STOP: Whether to stop early during beam decoding
+    - DEFAULT_TOP_K: Top-k sampling value (used only if sampling)
+    - DEFAULT_TOP_P: Top-p (nucleus) sampling value
+    - DEFAULT_TEMPERATURE: Sampling temperature (optional)
     """
+    
+    # Absolute PATH
+    PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
-    MODEL_MAP = {
-        "BART": "facebook/bart-large-cnn",
-        "DISTILBART": "sshleifer/distilbart-cnn-12-6",
-        "T5": "google-t5/t5-small"
-    }
-    """
-    **Pipeline usage:**
-    - task for T5 model: **\"translation\"** \n
-    - task for BART and DistilBART models: **\"summarization\"** \n
-    """
+    # config setup -> handles model behavior with parameters 
+    CONFIG_PATH = os.path.join(PROJECT_ROOT, "configs", "summarization.json")
+    CONFIG = {}
 
-    MODEL_TOKEN_LIMIT_MAP = {
-            "BART": 1024,
-            "DISTILBART": 1024,
-            "T5": 512
-        }
-    """Each model has its own token limits, typically 1,024 tokens though."""
+    # model setup -> handles model registry: what models are available, their paths, and their token limits
+    MODEL_REGISTRY_PATH = os.path.join(PROJECT_ROOT, "configs", "model_registry.json")
+    MODEL_REGISTRY = {}
 
-    ### GLOBALS
-    # "Dummy" max length to avoid HuggingFace/Transformer warnings
-    TOKENIZER_DUMMY_MAX = 99999
-
-    # Summarization settings:
-    DEFAULT_SUMMARY_RATIO = 0.3        # 30% of the input length
-    DEFAULT_MIN_TOKENS = 80           # lower clamp -> at least 80 tokens
-    DEFAULT_OVERLAP_RATIO = 0.1             # 10% overlap ratio for chunked summarization
-    DEFAULT_LENGTH_PENALTY_THRESHOLD = 800  # by token count: if input < 800 => length_penalty=1.0; else 2.0
-
+    @classmethod
+    def load_config(cls) -> None:
+        """Load summarization configuration and model registry from JSON files."""
+        import json
+        with open(cls.CONFIG_PATH, "r", encoding="utf-8") as f:
+            cls.CONFIG = json.load(f)
+        with open(cls.MODEL_REGISTRY_PATH, "r", encoding="utf-8") as f:
+            cls.MODEL_REGISTRY = json.load(f)
 
     @staticmethod
-    def use_pipeline(p: Printer, model_task: str = "summarization", model_name: str = MODEL_MAP["BART"]) -> object:
-        """Load a model using the pipeline API. \n
+    def use_pipeline(p: Printer, model_key: str = "BART") -> object:
+        """
+        Load a model using the pipeline API. \n
+        ***
         Returns:
             *object*: A *pipeline* object for the specified task and model.
         """
         p.info("Loading pipeline...")
         from transformers import pipeline
         try:
+            model_task = Models.MODEL_REGISTRY[model_key]["task"]
+            hf_path = Models.MODEL_REGISTRY[model_key]["hf_path"]
+
             pipe = pipeline(
                 task=model_task, 
-                model=model_name, 
-                tokenizer=model_name
+                model=hf_path, 
+                tokenizer=hf_path
                 )
             p.success("Pipeline loaded successfully.\n")
             return pipe
@@ -65,13 +79,14 @@ class Models:
             p.error(f"Error loading pipeline: {str(e)}")
     
     @staticmethod
-    def use_raw(p: Printer, model_name: str = MODEL_MAP["BART"]) -> tuple:
+    def use_raw(p: Printer, model_key: str = "BART") -> tuple:
         """
         Load a model using the raw API. \n
-        (AutoTokenizer and AutoModelForSeq2SeqLM) \n
+        *(AutoTokenizer and AutoModelForSeq2SeqLM)* \n
+        ***
         Args:
             printer (Printer): The printer object for logging.
-            model_name (str): The name of the model to load.
+            model_key (str): The name of the model to load.
 
         Returns:
             *tuple*: A tuple containing the tokenizer and model objects.
@@ -79,8 +94,11 @@ class Models:
         try:
             p.info("Loading model and tokenizer...")
             from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
-            tokenizer = AutoTokenizer.from_pretrained(model_name)
-            model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
+            
+            hf_path = Models.MODEL_REGISTRY[model_key]["hf_path"]
+            
+            tokenizer = AutoTokenizer.from_pretrained(hf_path)
+            model = AutoModelForSeq2SeqLM.from_pretrained(hf_path)
             
             p.success("Model and tokenizer loaded successfully.\n")
             return (
@@ -93,9 +111,10 @@ class Models:
     @staticmethod
     def summarAIze_raw(p: Printer, tokenizer: "AutoTokenizer", model: "AutoModelForSeq2SeqLM", text: str) -> str:
         """
-        Summarize text using the specified tokenizer and model. (Direct Model Load) \n
+        Summarize text using the specified tokenizer and model. *(Direct Model Load)* \n
         Dynamically adjusts generation parameters based on input length. \n
         Breaks text into chunks if it exceeds the model's maximum token limit. \n
+        ***
         Args:
             printer (Printer): The printer object for logging.
             tokenizer (AutoTokenizer): The tokenizer for the model.
@@ -106,20 +125,22 @@ class Models:
         """
         
         try:
+            cfg = Models.CONFIG
+            
             # Consider model's token limit
             model_name, token_limit = Models.get_token_limit(p, model)
             
             # Tokenize to get input length only (avoiding warnings using global dummy variable)
             tokens = tokenizer.encode(
                 text, 
-                max_length=Models.TOKENIZER_DUMMY_MAX,
+                max_length=cfg["TOKENIZER_DUMMY_MAX"],
                 truncation=False
                 )
             input_length = len(tokens)
             
             ### [CHUNKING CONDITION] If the input is too long, use chunking method
             if input_length > token_limit:
-                p.info(f"Input exceeds token limit for {model_name} model ({input_length} > {token_limit}), using chunked summarization...")
+                p.warning(f"Input exceeds token limit for {model_name} model ({input_length} > {token_limit}), using chunked summarization...")
                 return Models.summarAIze_raw_chunked(p, tokenizer, model, text, token_limit)
 
             # Tokenize the input text
@@ -133,24 +154,11 @@ class Models:
 
             # Handle input token length and dynamically adjust generation parameters
             input_length = inputs["input_ids"].shape[1]
-            summary_ratio = Models.DEFAULT_SUMMARY_RATIO # currently set to 30%(0.3) of the input length
-            target_length = int(input_length * summary_ratio) # Prevent extreme short or extreme long
-            target_length = max(Models.DEFAULT_MIN_TOKENS, min(target_length, token_limit)) # atleast 80 tokens, or if target_length is greater than 80, but less than [token_limit] we use that. otherwise its capped at [token_limit] tokens.
-            max_length = target_length
-            min_length = int(0.7 * max_length)
-            length_penalty = 1.0 if input_length < Models.DEFAULT_LENGTH_PENALTY_THRESHOLD else 2.0 # doing this helps with not over summarizing shorts, and under summarizing longs..
+            kwargs = Models.get_generation_kwargs(input_length, token_limit)
 
             # Generate summary
             p.info("Generating summary...")
-            summary_ids = model.generate(
-                inputs["input_ids"],
-                max_length=max_length,
-                min_length=min_length,
-                length_penalty=length_penalty,  
-                num_beams=4,
-                early_stopping=True,
-                do_sample=False
-            )
+            summary_ids = model.generate(inputs["input_ids"], **kwargs)
 
             # Decode the summary
             summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
@@ -163,6 +171,7 @@ class Models:
     def summarAIze_raw_chunked(p: Printer, tokenizer: "AutoTokenizer", model: "AutoModelForSeq2SeqLM", text: str, token_limit: int) -> str:
         """
         Summarize the chunks then return concatenated summaries. \n
+        ***
         Args:
             printer (Printer): The printer object for logging.
             tokenizer (AutoTokenizer): The tokenizer for the model.
@@ -189,22 +198,8 @@ class Models:
 
                 # Handle input(chunk) token length and dynamically adjust generation parameters
                 chunk_length = inputs["input_ids"].shape[1]
-                summary_ratio = Models.DEFAULT_SUMMARY_RATIO  # 30% of the chunk 
-                target_length = int(chunk_length * summary_ratio) # Prevent extreme short or extreme long
-                target_length = max(Models.DEFAULT_MIN_TOKENS, min(target_length, token_limit)) # atleast 80 tokens, or if target_length is greater than 80, but less than [token_limit] we use that. otherwise its capped at [token_limit] tokens.
-                max_length = target_length
-                min_length = int(0.7 * max_length)
-                length_penalty = 1.0 if chunk_length < Models.DEFAULT_LENGTH_PENALTY_THRESHOLD else 2.0 # doing this helps with not over summarizing shorts, and under summarizing longs..
-
-                summary_ids = model.generate(
-                    inputs["input_ids"],
-                    max_length=max_length,
-                    min_length=min_length,
-                    length_penalty=length_penalty,
-                    num_beams=4,
-                    early_stopping=True,
-                    do_sample=False
-                )
+                kwargs = Models.get_generation_kwargs(chunk_length, token_limit)
+                summary_ids = model.generate(inputs["input_ids"], **kwargs)
                 summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
                 summaries.append(summary)
 
@@ -219,25 +214,28 @@ class Models:
         """
         Splits text into overlapping chunks. \n
         Useful for long texts that exceed the model's maximum token limit. \n
+        ***
         Args:
             printer (Printer): The printer object for logging.
             text (str): The input text to split.
             tokenizer_path (str): Path to the tokenizer model.
             max_tokens (int): Maximum number of tokens per chunk.
-            overlap (int): Number of overlapping tokens between chunks.
         Returns:
             list[str]: A list of text chunks.
         """
+        
         try:
+            cfg = Models.CONFIG
+
             p.info("Tokenizing and splitting text into chunks...")
             
             tokens = tokenizer.encode(
                 text, 
-                max_length=Models.TOKENIZER_DUMMY_MAX, # Dummy limit so that transformers warning does not appear in output, provided token_limit (sequence) is greater than model limit
+                max_length=cfg["TOKENIZER_DUMMY_MAX"], # Dummy limit so that transformers warning does not appear in output, provided token_limit (sequence) is greater than model limit
                 truncation=False
                 )
 
-            overlap = int(max_tokens * Models.DEFAULT_OVERLAP_RATIO) # will do a %10 overlap of chunk size -> starts at 90% index of previous index for next index
+            overlap = int(max_tokens * cfg["DEFAULT_OVERLAP_RATIO"]) # will do a %10 overlap of chunk size -> starts at 90% index of previous chunk
             stride = max_tokens - overlap
             chunks = [tokens[i:i + max_tokens] for i in range(0, len(tokens), stride)]
             decoded_chunks = [tokenizer.decode(chunk, skip_special_tokens=True) for chunk in chunks]
@@ -251,27 +249,69 @@ class Models:
     def get_token_limit(p: Printer, model: "AutoModelForSeq2SeqLM") -> tuple[str, int]:
         """
         Return the max input token limit based on the model. \n
+        ***
         Args:
             p (Printer): The printer object for logging.
-            model_name (str): The name of the model.
+            model (AutoModelForSeq2SeqLM): The model object.
         Returns:
-            int: The maximum input token limit.
+            tuple: 
+                - str: The model name; Ex: 'BART' \n
+                - int: The maximum input token limit for that model.
         """
         
-        # Extract model name from model object
+        # Extract model name from model_registry config
         try:
             model_path = model.name_or_path.lower()
-            model_name = None
+            model_key = None
 
-            for key, path in Models.MODEL_MAP.items():
-                if path.lower() in model_path:
-                    model_name = key.upper()
+            for key, info in Models.MODEL_REGISTRY.items():
+                if info["hf_path"].lower() in model_path:
+                    model_key = key
                     break
         except Exception as e:
             p.error(f"Failed to detect model key from model object: {str(e)}")
 
-        # Determine token limit from extracted model name
-        if model_name in Models.MODEL_TOKEN_LIMIT_MAP:
-            return model_name, Models.MODEL_TOKEN_LIMIT_MAP[model_name] # retruns the value from limit map
+        if model_key and "token_limit" in Models.MODEL_REGISTRY[model_key]:
+            return model_key, Models.MODEL_REGISTRY[model_key]["token_limit"]
         else:
-            p.error("Unable to determine model tokenization limit: Invalid/Unknown model")# fallback if for some reason its not in model token limit map
+            p.error("Unable to determine model tokenization limit: Invalid/Unknown model")# fallback if for some reason its not in model_registry config
+
+    @staticmethod
+    def get_generation_kwargs(input_len: int, token_limit: int) -> dict:
+        """
+        Generate the summarization parameters based off the **'summarization.json'** config \n
+        ***
+        Args:
+            input_len (int): The token length of the input.
+            token_limit (int): The token length limit of the current model.
+        Returns:
+            dict:
+                - TOKENIZER_DUMMY_MAX: Dummy max to suppress tokenizer warnings
+                - DEFAULT_SUMMARY_RATIO: Target summary length as % of input
+                - DEFAULT_MIN_TOKENS: Minimum tokens allowed for a summary
+                - DEFAULT_OVERLAP_RATIO: Chunk overlap % (for long input splitting)
+                - DEFAULT_LENGTH_PENALTY_THRESHOLD: Controls when length_penalty becomes 2.0
+                - DEFAULT_DO_SAMPLE: Enable sampling mode
+                - DEFAULT_NUM_BEAMS: Number of beams for beam search
+                - DEFAULT_EARLY_STOP: Whether to stop early during beam decoding
+                - DEFAULT_TOP_K: Top-k sampling value (used only if sampling)
+                - DEFAULT_TOP_P: Top-p (nucleus) sampling value
+                - DEFAULT_TEMPERATURE: Sampling temperature (optional)
+        """
+        
+        cfg = Models.CONFIG
+        
+        summary_len = int(input_len * cfg["DEFAULT_SUMMARY_RATIO"])
+        summary_len = max(cfg["DEFAULT_MIN_TOKENS"], min(summary_len, token_limit))
+        penalty = 1.0 if input_len < cfg["DEFAULT_LENGTH_PENALTY_THRESHOLD"] else 2.0
+
+        return {
+            "max_length": summary_len,
+            "min_length": int(0.7 * summary_len),
+            "length_penalty": penalty if not cfg["DEFAULT_DO_SAMPLE"] else None,
+            "num_beams": cfg["DEFAULT_NUM_BEAMS"] if not cfg["DEFAULT_DO_SAMPLE"] else 1,
+            "early_stopping": cfg["DEFAULT_EARLY_STOP"] if not cfg["DEFAULT_DO_SAMPLE"] else False,
+            "do_sample": cfg["DEFAULT_DO_SAMPLE"],
+            "top_k": cfg["DEFAULT_TOP_K"] if cfg["DEFAULT_DO_SAMPLE"] else None,
+            "top_p": cfg["DEFAULT_TOP_P"] if cfg["DEFAULT_DO_SAMPLE"] else None,
+        }

@@ -1,17 +1,17 @@
 import os
+import json
 from utils.ansi_helpers import Printer
 
-SUPPORTED_FILES_MAP: dict[str, str] = {
-    ".txt": "Text File",
-    ".pdf": "PDF File",
-    ".docx": "Word Document",
-}
+# Load supported file extensions config
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+CONFIG_PATH = os.path.join(PROJECT_ROOT, "configs", "supported_files.json")
+with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+    SUPPORTED_FILES_MAP: dict[str, str] = json.load(f)
 
 def is_supported_file_extension(p: Printer, path: str) -> tuple[bool, str]:
     """
     Verify extension is compatible with the projects requirements. \n
-    I made it a tuple that includes the extension in case i ever want to use it later.
-    
+    ***
     Returns:
         tuple:
             - bool: True if supported, False if not
@@ -31,7 +31,7 @@ def verify_file_path(p: Printer, file_path: str) -> str:
     """
     Check if the file exists and return its (corrected/normalized) path. \n
     This function uses methods from **os** module that are **cross-platform compatible**.\n
-    
+    ***
     Returns:
         str: 
             - The input path if the file at that directory exists.
@@ -64,7 +64,7 @@ def verify_output_path(p: Printer, file_path: str) -> str:
     """
     Check if the output directory exists and return its (corrected/normalized) path. \n
     This function uses methods from **os** module that are **cross-platform compatible**.\n
-    
+    ***
     Returns:
         str: 
             - The output path if it's a valid directory.
@@ -99,8 +99,8 @@ def verify_output_path(p: Printer, file_path: str) -> str:
 
 def read_file(p: Printer, file_path: str) -> str:
     """
-    Read the content of the file and return as string.
-    
+    Read the content of the file and return as string. \n
+    ***
     Returns:
         str: 
             - The content of the file as a string.
@@ -146,8 +146,8 @@ def read_file(p: Printer, file_path: str) -> str:
 
 def write_file(p: Printer, file_path: str, content: str) -> None:
     """
-    Write the content of the file and return as string.
-    
+    Write the content of the file and return as string. \n
+    ***
     Returns:
         None: 
     """
