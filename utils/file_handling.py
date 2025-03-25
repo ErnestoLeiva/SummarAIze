@@ -38,7 +38,7 @@ def verify_file_path(p: Printer, file_path: str) -> str:
     """
     
     try:
-        p.info(f"Verifying input file path: {file_path}")
+        #p.info(f"Verifying input file path: {file_path}")
         
         input_path = os.path.normpath(file_path)
         
@@ -46,7 +46,7 @@ def verify_file_path(p: Printer, file_path: str) -> str:
         if not os.path.isfile(input_path):
             alt_path = os.path.join(os.getcwd(), input_path.lstrip(r"\/"))
             if os.path.isfile(alt_path):
-                p.success(f"File found: {alt_path}\n")
+                #p.success(f"File found: {alt_path}\n")
                 if is_supported_file_extension(p, alt_path):
                     return alt_path
             else:
@@ -54,7 +54,7 @@ def verify_file_path(p: Printer, file_path: str) -> str:
         
         # Here the normalized path worked, meaning file exists
         else:
-            p.success(f"File found: {file_path}\n")
+            #p.success(f"File found: {file_path}\n")
             if is_supported_file_extension(p, input_path):
                 return input_path
     except Exception as e:
@@ -71,7 +71,7 @@ def verify_output_path(p: Printer, file_path: str) -> str:
     """
     
     try:
-        p.info(f"Verifying output path: {file_path}")
+        #p.info(f"Verifying output path: {file_path}")
         
         output_path = os.path.normpath(file_path)
         output_directory = os.path.dirname(output_path)
@@ -81,7 +81,7 @@ def verify_output_path(p: Printer, file_path: str) -> str:
             alt_path = os.path.join(os.getcwd(), output_path.lstrip(r"\/"))
             alt_directory = os.path.dirname(alt_path)
             if os.path.isdir(alt_directory):
-                p.success(f"Output directory found: {os.path.dirname(alt_path)}\n")
+                #p.success(f"Output directory found: {os.path.dirname(alt_path)}\n")
                 supported, ext = is_supported_file_extension(p, alt_path)
                 if supported:
                     return alt_path
@@ -90,7 +90,7 @@ def verify_output_path(p: Printer, file_path: str) -> str:
         
         # Here the normalized path worked, meaning directory exists
         else:
-            p.success(f"Output directory verified: {output_directory}\n")
+            #p.success(f"Output directory verified: {output_directory}\n")
             if is_supported_file_extension(p, output_path):
                 return output_path
 
@@ -107,7 +107,7 @@ def read_file(p: Printer, file_path: str) -> str:
     """
     
     try:
-        p.info("Reading file...")
+        #p.info("Reading file...")
         
         # GET FILE EXTENSION (we already verified it is supported earlier -> verify_file_path -> is_supported_file_extension)
         ext: str = os.path.splitext(file_path)[1].lower() 
@@ -137,7 +137,7 @@ def read_file(p: Printer, file_path: str) -> str:
         if not text.strip():
             p.error(f"File is empty or contains no readable text: {file_path}")
 
-        p.success("File read successfully\n")
+        #p.success("File read successfully\n")
         return text
     except ImportError as e:
         p.error(f"Required library not found: {str(e)}")
@@ -153,7 +153,7 @@ def write_file(p: Printer, file_path: str, content: str) -> None:
     """
     
     try:
-        p.info("Writing file...")
+        #p.info("Writing file...")
         
         with open(file_path, "w", encoding="utf-8") as file:
             file.write(content)

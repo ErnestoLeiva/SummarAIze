@@ -100,7 +100,7 @@ class Models:
             tokenizer = AutoTokenizer.from_pretrained(hf_path)
             model = AutoModelForSeq2SeqLM.from_pretrained(hf_path)
             
-            p.success("Model and tokenizer loaded successfully.\n")
+            p.success("Model and tokenizer loaded successfully.")
             return (
                 tokenizer, 
                 model
@@ -162,7 +162,7 @@ class Models:
 
             # Decode the summary
             summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
-            p.success("Text summarized successfully.\n")
+            p.success("Text summarized successfully.")
             return summary
         except Exception as e:
             p.error(f"Error during summarization: {str(e)}")
@@ -177,40 +177,42 @@ class Models:
             tokenizer (AutoTokenizer): The tokenizer for the model.
             model (AutoModelForSeq2SeqLM): The model for summarization.
             text (str): The input text to summarize.
-            token_limit (int): The models token limit
+            token_limit (int): The model's token limit
         Returns:
-            str:
-            The concatenated summarized text chunks.
+            str: The concatenated summarized text chunks.
         """
         try:
-            chunks = Models.split_into_chunks(p, text, tokenizer, max_tokens=token_limit)
-            summaries = []
-            for i, chunk in enumerate(chunks):
-                p.info(f"Tokenizing & Summarizing chunk {i+1}/{len(chunks)}...")
-                
-                # Tokenize chunk text
+            from concurrent.futures import ThreadPoolExecutor
+            from multiprocessing import cpu_count
+
+
+            decoded_chunks, chunks = Models.split_into_chunks(p, text, tokenizer, token_limit)
+
+            def summarize_chunk(i: int, chunk: str) -> str:
+                p.info(f"Summarizing chunk {i + 1}/{len(decoded_chunks)}...")
                 inputs = tokenizer(
                     chunk,
                     return_tensors="pt",
                     max_length=token_limit,
                     truncation=True
                 )
+                chunk_len = inputs["input_ids"].shape[1]
+                generation_params = Models.get_generation_kwargs(chunk_len, token_limit)
+                summary_ids = model.generate(inputs["input_ids"], **generation_params)
+                return tokenizer.decode(summary_ids[0], skip_special_tokens=True)
 
-                # Handle input(chunk) token length and dynamically adjust generation parameters
-                chunk_length = inputs["input_ids"].shape[1]
-                kwargs = Models.get_generation_kwargs(chunk_length, token_limit)
-                summary_ids = model.generate(inputs["input_ids"], **kwargs)
-                summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
-                summaries.append(summary)
+            with ThreadPoolExecutor(max_workers=min(cpu_count(), len(chunks))) as executor:
+                summaries = list(executor.map(lambda i_chunk: summarize_chunk(*i_chunk), enumerate(decoded_chunks)))
 
             final_summary = "\n\n".join(summaries)
-            p.success(f"Text summarized successfully. (Chunk count: {len(chunks)})\n")
+            p.success(f"Text summarized successfully. (Chunk count: {len(summaries)})")
             return final_summary
+
         except Exception as e:
             p.error(f"Error during chunked summarization: {str(e)}")
 
     @staticmethod
-    def split_into_chunks(p: Printer, text: str, tokenizer: "AutoTokenizer", max_tokens: int = 1024) -> list[str]:
+    def split_into_chunks(p: Printer, text: str, tokenizer: "AutoTokenizer", max_tokens: int = 1024) -> tuple[list[str], list[str]]:
         """
         Splits text into overlapping chunks. \n
         Useful for long texts that exceed the model's maximum token limit. \n
@@ -221,7 +223,9 @@ class Models:
             tokenizer_path (str): Path to the tokenizer model.
             max_tokens (int): Maximum number of tokens per chunk.
         Returns:
-            list[str]: A list of text chunks.
+            tuple:
+            - list[str]: A list of decoded text chunks.
+            - list[list[int]]: A list of raw token ID chunks
         """
         
         try:
@@ -240,8 +244,8 @@ class Models:
             chunks = [tokens[i:i + max_tokens] for i in range(0, len(tokens), stride)]
             decoded_chunks = [tokenizer.decode(chunk, skip_special_tokens=True) for chunk in chunks]
 
-            p.success(f"Text split into {len(decoded_chunks)} chunks.\n")
-            return decoded_chunks
+            p.success(f"Text split into {len(decoded_chunks)} chunks.")
+            return decoded_chunks, chunks
         except Exception as e:
             p.error(f"Error splitting text into chunks: {str(e)}")
 
