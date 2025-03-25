@@ -1,6 +1,6 @@
 {
   "name": "summaraize",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "SummarAIze is an AI-powered legal document summarization tool built in Python. Designed to help legal professionals, students, and researchers quickly extract key information from long contracts and legal texts, SummarAIze runs entirely offline and is built with a modular architecture for future expansion.",
   "scripts": {
     "start": "python ai-sum.py -h"
