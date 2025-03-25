@@ -197,8 +197,8 @@ class Models:
                     truncation=True
                 )
                 chunk_len = inputs["input_ids"].shape[1]
-                generation_params = Models.get_generation_kwargs(chunk_len, token_limit)
-                summary_ids = model.generate(inputs["input_ids"], **generation_params)
+                kwargs = Models.get_generation_kwargs(chunk_len, token_limit)
+                summary_ids = model.generate(inputs["input_ids"], **kwargs)
                 return tokenizer.decode(summary_ids[0], skip_special_tokens=True)
 
             with ThreadPoolExecutor(max_workers=min(cpu_count(), len(chunks))) as executor:
