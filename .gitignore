@@ -173,3 +173,6 @@ cython_debug/
 
 # Ignore the temp file from upd-ver.bat 
 temp.txt
+
+# DEVELOPER DEBUG - Ignore output file while testing
+test_files/output.txt
