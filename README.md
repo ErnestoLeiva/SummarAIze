@@ -131,8 +131,8 @@ This command will process the specified file and output a concise summary to the
 
 - **🛠️ Core Summarization Engine:**
   - Implement extractive summarization using T5-Small/DistilBART/BART.
-- **📄 Text Format Support:**
-  - Focus on plain text (.txt) files with clear formatting guidelines.
+- ~~**📄 Text Format Support:**~~ ✅
+  - ~~Focus on plain text (.txt) files with clear formatting guidelines.~~
 - **⌨️ CLI Implementation:**
   - Allow users to input file paths and specify summary length.
 - **🔑 Key Term Identification:**
@@ -140,8 +140,8 @@ This command will process the specified file and output a concise summary to the
 
 ### 📅 Milestones
 
-- **Week 1:** Set up the repository, install dependencies, and test NLP models with sample legal texts.
-- **Week 2:** Develop the basic summarization module with sentence extraction.
+- ~~**Week 1:** Set up the repository, install dependencies, and test NLP models with sample legal texts.~~ ✅
+- ~~**Week 2:** Develop the basic summarization module with sentence extraction.~~ ✅
 - **Week 3:** Integrate key term identification and summary length customization.
 - **Week 4:** Finalize the CLI and improve text preprocessing for legal documents.
 - **Week 5:** Test with sample contracts and refine summary quality.
@@ -149,8 +149,8 @@ This command will process the specified file and output a concise summary to the
 
 ### 🔮 Future Enhancements
 
-- **📑 Additional Format Support:**
-  - Expand support to additional file formats (PDF, DOCX).
+- ~~**📑 Additional Format Support:**~~ ✅
+  - ~~Expand support to additional file formats (PDF, DOCX).~~
 - **🏛️ Document Type Expansion:**
   - Broaden to other legal document types (e.g., court opinions, regulations).
 - **⚖️ Advanced Legal Clause Identification:**
