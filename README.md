@@ -129,12 +129,12 @@ This command will process the specified file and output a concise summary to the
 
 ### 🎯 Immediate Objectives
 
-- **🛠️ Core Summarization Engine:**
-  - Implement extractive summarization using T5-Small/DistilBART/BART.
+- ~~**🛠️ Core Summarization Engine:**~~ ✅
+  - ~~Implement extractive summarization using T5-Small/DistilBART/BART.~~
 - ~~**📄 Text Format Support:**~~ ✅
   - ~~Focus on plain text (.txt) files with clear formatting guidelines.~~
-- **⌨️ CLI Implementation:**
-  - Allow users to input file paths and specify summary length.
+- ~~**⌨️ CLI Implementation:**~~ ✅
+  - ~~Allow users to input file paths and specify model.~~
 - **🔑 Key Term Identification:**
   - Highlight and list frequently occurring legal terms.
 
