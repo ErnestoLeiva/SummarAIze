@@ -77,7 +77,8 @@ cd SummarAIze
 
 You can install the required dependencies using one of the following methods:
 
-#### - Option 1: Using pip ![STANDARD](https://img.shields.io/badge/Universal%20(Mac%2FLinux%2FWindows)-gray?style=plastic&label=STANDARD&labelColor=blue)
+#### - Option 1: Using pip
+![STANDARD](https://img.shields.io/badge/Universal%20(Mac%2FLinux%2FWindows)-gray?style=plastic&label=STANDARD&labelColor=blue)
 
 ```bash
 pip install -r requirements.txt
@@ -85,10 +86,12 @@ pip install -r requirements.txt
 
 #### - Option 2: Windows Installation Option (Using rqinst.bat)
 
-- **Double-Click Method** ![EASIEST](https://img.shields.io/badge/Windows%20Only*-gray?style=plastic&label=EASIEST&labelColor=brightgreen)
+- **Double-Click Method**
+![EASIEST](https://img.shields.io/badge/Windows%20Only*-gray?style=plastic&label=EASIEST&labelColor=brightgreen)
   - If you prefer not to use the terminal, simply **double-click** the `rqinst.bat` file in File Explorer. The script will launch and guide you through the installation process interactively.
   
-- **Using Visual Studio Code Terminal:** ![MANUAL](https://img.shields.io/badge/Windows%20Only*-gray?style=plastic&label=MANUAL&labelColor=orange)
+- **Using Visual Studio Code Terminal:**
+![MANUAL](https://img.shields.io/badge/Windows%20Only*-gray?style=plastic&label=MANUAL&labelColor=orange)
   1. **Run Visual Studio Code as Administrator.**
   2. Open the integrated terminal.
   3. Run the following command:
@@ -106,24 +109,43 @@ pip install -r requirements.txt
 
 The basic usage of the tool via the command-line is as follows:
 
-```bash
+``` bash
 python ai-sum.py --summarize "../PATH/TO/FILE"
 ```
 
-### 🔹 Example
+### 🔹 Examples
 
-```bash
-python ai-sum.py --summarize "C:/Users/Roary/documents/mascot.txt"
+#### The usage screen showing available flags
+
+<img src="https://i.imgur.com/iaetR92.png" alt="summarAIze"><br />
+
+``` bash
+python ai-sum.py --help
 ```
 
-This command will process the specified file and output a concise summary to the terminal.
+#### Example: Input flag using test file 'roman.txt'
 
-<div align="center">
-  <h3>The usage screen showing available flags</h3><br />
-  <img src="https://i.imgur.com/iaetR92.png" alt="summarAIze">
-  <h3>An example using the provided test file 'roman.txt'</h3>
-  <img src="https://i.imgur.com/1vGjiOH.png" alt="summarAIze example with roman.txt">
-</div>
+<img src="https://i.imgur.com/Cqu7o5C.png" alt="summarAIze input flag example with roman.txt"><br />
+
+``` bash
+python ai-sum.py --summarize /test_files/roman.txt
+```
+
+#### Example: Input & Output flags using the test file 'roman.txt'
+
+<img src="https://i.imgur.com/6b3TCIm.png" alt="summarAIze input and output flag example with roman.txt"><br />
+
+``` bash
+python ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.txt
+```
+
+#### Example: Input & Output & Model flags using the test file 'roman.txt'
+
+<img src="https://i.imgur.com/x7vGxt7.png" alt="summarAIze input and output and model flag example with roman.txt"><br />
+
+``` bash
+python ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.txt --model distilbart
+```
 
 ## <a id="roadmap--milestones"></a>🚀 Roadmap & Milestones
 
