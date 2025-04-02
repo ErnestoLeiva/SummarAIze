@@ -13,5 +13,10 @@
       "hf_path": "google-t5/t5-small",
       "task": "translation",
       "token_limit": 512
+    },
+    "LEGAL-BART": {
+      "hf_path": "local_models/finetuned-legal-bart",
+      "task": "summarization",
+      "token_limit": 1024
     }
   }

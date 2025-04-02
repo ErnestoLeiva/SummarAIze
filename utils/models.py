@@ -99,7 +99,7 @@ class Models:
             
             tokenizer = AutoTokenizer.from_pretrained(hf_path)
             model = AutoModelForSeq2SeqLM.from_pretrained(hf_path)
-            
+
             p.success("Model and tokenizer loaded successfully.")
             return (
                 tokenizer, 
@@ -158,7 +158,11 @@ class Models:
 
             # Generate summary
             p.info("Generating summary...")
-            summary_ids = model.generate(inputs["input_ids"], **kwargs)
+            summary_ids = model.generate(
+                inputs["input_ids"],
+                attention_mask=inputs["attention_mask"],
+                **kwargs
+            )
 
             # Decode the summary
             summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
