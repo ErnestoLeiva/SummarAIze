@@ -35,14 +35,12 @@ def main(args) -> None:
         summary = Models.summarAIze_raw(p, tokenizer, model, text)
 
     ### print the results
-    if not args.gui_mode and not args.output: # Standard CLI mode
+    if not args.output: # Standard CLI mode or GUI mode
         p.result(f"SummarAIzation: {summary}\n")
     
     elif args.output:   # Output flag is set
         write_file(p, args.output, summary)
-    
-    else:   # GUI mode is set or other cases i guess ------------------------------ CAN MODIFY THIS LATER DURING DEVELOPMENT OF GUI -------------------------------------------------!!!!!!!!!!!!!!!!!!!!!!
-        print(f"{summary}")
+
     sys.exit(0)
 
 

@@ -1,0 +1,11 @@
+{
+    "Customization": {
+        "theme": "dark"
+    },
+    "Options": {
+        "model": "BART",
+        "output_on": false,
+        "width": 679,
+        "height": 758
+    }
+}

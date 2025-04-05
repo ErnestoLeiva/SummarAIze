@@ -27,7 +27,7 @@ class Symbols:
     """ANSI escape codes for symbols."""
     ERROR = f"{Colors.RED}✗ {Colors.RESET}"
     RESULT = f"{Colors.CYAN}▶▶ {Colors.RESET}"
-    SUCCESS = f"{Colors.GREEN}√ {Colors.RESET}"
+    SUCCESS = f"{Colors.GREEN}✓ {Colors.RESET}"
     WARNING = f"{Colors.YELLOW}⚠ {Colors.RESET}"
     TIMER = f"{Colors.MAGENTA}⧗ {Colors.RESET}"
     INFO = f"{Colors.BLUE}ℹ {Colors.RESET}"
@@ -44,79 +44,34 @@ class Symbols:
 class Printer:
     """Printer class to print specific types of messages."""
     
-    def __init__(self, no_ansi: bool = False, gui_mode: bool = False) -> None:
+    def __init__(self, no_ansi: bool = False, gui_mode: bool = False, gui_callback: callable = None) -> None:
         """
         Initialize the printer with ANSI color codes. \n
         Used to print messages with specific ANSI color codes and preceding symbols. \n
         *** \n
         :param no_ansi: If True, disable ANSI color codes. \n
         :param gui_mode: If True, disable all messages. \n
+        :param gui_callback: Used for progressbar in GUI app.
         """
         self.no_ansi = no_ansi
         self.gui_mode = gui_mode
+        self.gui_callback = gui_callback
         if self.no_ansi or should_disable_ansi():
             Symbols.disable()
 
-    def normal(self, message: str) -> None:
-        """
-        Print a normal message with no ANSI coloring or special characters. \n
-        Ignores the message if in *GUI mode*.
-        """
-        if self.gui_mode:
-            return
-        print(f"{message}")
+    def _output(self, message: str, prefix: str = ""):
+        print(f"{prefix}{message}")
 
-    def success(self, message: str) -> None:
-        """
-        Print a success message. \n
-        Ignores the message if in *GUI mode*.
-        """
-        if self.gui_mode:
-            return
-        print(f"{Symbols.SUCCESS}{message}")
-
-    def error(self, message: str, exit_code: int = 1) -> None:
-        """
-        Print an error message. \n
-        **Note**: This will exit the program with a status code of 1.\n
-        Ignores the message if in *GUI mode*.
-        """
-        if not self.gui_mode:
+    def normal(self, message: str): self._output(message)
+    def success(self, message: str): self._output(message, Symbols.SUCCESS)
+    def error(self, message: str, exit_code: int = 1):
+        if self.gui_mode or self.gui_callback:
             print(f"{Symbols.ERROR}{message}")
-        sys.exit(exit_code)
-
-    def info(self, message: str) -> None:
-        """
-        Print an info message.\n
-        Ignores the message if in *GUI mode*.
-        """
-        if self.gui_mode:
-            return
-        print(f"{Symbols.INFO}{message}")
-
-    def timer(self, message: str) -> None:
-        """
-        Print a timer message.\n
-        Ignores the message if in *GUI mode*.
-        """
-        if self.gui_mode:
-            return
-        print(f"{Symbols.TIMER}{message}")
-    
-    def warning(self, message: str) -> None:
-        """
-        Print a warning message.\n
-        Ignores the message if in *GUI mode*.
-        """
-        if self.gui_mode:
-            return
-        print(f"{Symbols.WARNING}{message}")
-
-    def result(self, message: str) -> None:
-        """
-        Print a result message.\n
-        Ignores the message if in *GUI mode*.
-        """
-        if self.gui_mode:
-            return
-        print(f"{Symbols.RESULT}{message}")
+            raise Exception(message)
+        else:
+            print(f"{Symbols.ERROR}{message}")
+            sys.exit(exit_code)
+    def info(self, message: str): self._output(message, Symbols.INFO)
+    def timer(self, message: str): self._output(message, Symbols.TIMER)
+    def warning(self, message: str): self._output(message, Symbols.WARNING)
+    def result(self, message: str): self._output(message, Symbols.RESULT)

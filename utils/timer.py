@@ -14,7 +14,7 @@ class Timer:
     """
     def __init__(self, task_name: str = "Task", gui_mode: bool = False, no_ansi: bool = False) -> None:
         self.task_name = task_name
-        self.gui_mode = gui_mode
+        self.gui_mode = not gui_mode
         self.no_ansi = no_ansi
         self.printer = Printer(self.no_ansi)
     
