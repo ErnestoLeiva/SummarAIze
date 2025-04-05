@@ -16,7 +16,8 @@ DEFAULT_SETTINGS = {
     "Customization": {"theme": "dark"},
     "Options": {"model": "BART", "output_on": False, "width": MIN_WIDTH, "height": MIN_HEIGHT}
 }
-with open("configs/model_registry.json", "r", encoding="utf-8") as f:
+CONFIGS_PATH = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "configs", "model_registry.json"))
+with open(CONFIGS_PATH, "r", encoding="utf-8") as f:
     MODEL_REGISTRY = json.load(f)
     MODEL_CHOICES = list(MODEL_REGISTRY.keys())
 
