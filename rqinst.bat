@@ -32,7 +32,7 @@ IF NOT EXIST requirements.txt (
 )
 
 REM Check if Python is installed
-python --version >nul 2>&1
+py --version >nul 2>&1
 IF ERRORLEVEL 1 (
     powershell -NoProfile -Command ^
         "Write-Host '[X]' -ForegroundColor Red -NoNewline; Write-Host ' Python is not installed or not added to PATH.'"
@@ -100,7 +100,7 @@ exit /b
 :install_pip
 powershell -NoProfile -Command ^
     "Write-Host '[#]' -ForegroundColor Yellow -NoNewline; Write-Host ' Installing pip...'"
-powershell -Command "Start-Process cmd -ArgumentList '/c python -m ensurepip' -Verb RunAs"
+powershell -Command "Start-Process cmd -ArgumentList '/c py -m ensurepip' -Verb RunAs"
 IF ERRORLEVEL 1 (
     powershell -NoProfile -Command ^
         "Write-Host '[X]' -ForegroundColor Red -NoNewline; Write-Host ' Failed to install pip. Please try to install it manually.'"

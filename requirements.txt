@@ -5,3 +5,4 @@ transformers==4.49.0
 ttkthemes
 PyPDF2
 python-docx
+Pillow
