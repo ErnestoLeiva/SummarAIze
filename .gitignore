@@ -173,7 +173,7 @@ cython_debug/
 # ========= CUSTOM ADDS SPECIFIC TO THIS PROJECT =========
 
 # Ignore any changes made to GUI settings
-GUI/conf/settings.json
+GUI/conf/
 
 # Ignore adding local model files to repo
 local_models/
