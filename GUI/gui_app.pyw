@@ -57,7 +57,7 @@ class SummarAIzeGUI(tk.Tk):
         # TITLE LABEL
         title_label = ttk.Label(
             topbar,
-            text="Summarize Legal Documents - [FIU; CAP4630; Group 3]",
+            text="Summarize Legal Documents - [CAP4630 Group 3]",
             font=("Segoe UI", 12, "bold")
         )
         title_label.pack(side="left", padx=10)

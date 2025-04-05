@@ -113,7 +113,7 @@ The basic usage of the tool via the command-line is as follows:
 python ai-sum.py --summarize "../PATH/TO/FILE"
 ```
 
-### 🔹 Examples
+### 🔹 CLI Examples
 
 #### The usage screen showing available flags
 
@@ -125,15 +125,11 @@ python ai-sum.py --help
 
 #### Example: Input flag using test file 'roman.txt'
 
-<img src="https://i.imgur.com/Cqu7o5C.png" alt="summarAIze input flag example with roman.txt"><br />
-
 ``` bash
 python ai-sum.py --summarize /test_files/roman.txt
 ```
 
 #### Example: Input & Output flags using the test file 'roman.txt'
-
-<img src="https://i.imgur.com/6b3TCIm.png" alt="summarAIze input and output flag example with roman.txt"><br />
 
 ``` bash
 python ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.txt
@@ -141,11 +137,17 @@ python ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.t
 
 #### Example: Input & Output & Model flags using the test file 'roman.txt'
 
-<img src="https://i.imgur.com/x7vGxt7.png" alt="summarAIze input and output and model flag example with roman.txt"><br />
-
 ``` bash
 python ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.txt --model distilbart
 ```
+
+### 🔹 GUI Example
+
+#### All the GUI features are visible from the main window, featured in the image below
+
+<img src="https://i.imgur.com/DcKFcjH.png" alt="summarAIze"><br />
+
+
 
 ## <a id="roadmap--milestones"></a>🚀 Roadmap & Milestones
 
@@ -164,25 +166,25 @@ python ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.t
 
 - ~~**Week 1:** Set up the repository, install dependencies, and test NLP models with sample legal texts.~~ ✅
 - ~~**Week 2:** Develop the basic summarization module with sentence extraction.~~ ✅
-- **Week 3:** Integrate key term identification and summary length customization.
-- **Week 4:** Finalize the CLI and improve text preprocessing for legal documents.
-- **Week 5:** Test with sample contracts and refine summary quality.
+- ~~**Week 3:** Integrate key term identification and summary length customization.~~ 📝 ***under review***
+- ~~**Week 4:** Finalize the CLI and improve text preprocessing for legal documents.~~ 📝 ***under review***
+- ~~**Week 5:** Test with sample contracts and refine summary quality.~~ 📝 ***under review***
 - **Week 6:** Complete documentation and prepare for the project demonstration.
 
 ### 🔮 Future Enhancements
 
 - ~~**📑 Additional Format Support:**~~ ✅
   - ~~Expand support to additional file formats (PDF, DOCX).~~
-- **🏛️ Document Type Expansion:**
-  - Broaden to other legal document types (e.g., court opinions, regulations).
+- ~~**🏛️ Document Type Expansion:**~~ ✅
+  - ~~Broaden to other legal document types (e.g., court opinions, regulations).~~
 - **⚖️ Advanced Legal Clause Identification:**
   - Enhance identification of critical legal clauses.
-- **🖥️ GUI Development:**
-  - Develop a graphical user interface for a more user-friendly experience.
+- ~~**🖥️ GUI Development:**~~ ✅
+  - ~~Develop a graphical user interface for a more user-friendly experience.~~
 
 ## <a id="maintenance"></a>⚒️ Maintenance
 
-### 🛠️ Developer Responsibilities
+### Developer Responsibilities
 
 - **📦 Versioning:**  
   - Use `upd-ver.bat` windows script or `npm version <type>` terminal command to manage semantic versioning (Patch/Minor/Major/Custom).

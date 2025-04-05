@@ -5,7 +5,7 @@
     "Options": {
         "model": "BART",
         "output_on": false,
-        "width": 679,
-        "height": 758
+        "width": 649,
+        "height": 725
     }
 }
