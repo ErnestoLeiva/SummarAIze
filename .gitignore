@@ -170,6 +170,10 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
+# ========= CUSTOM ADDS SPECIFIC TO THIS PROJECT =========
+
+# Ignore any changes made to GUI settings
+GUI/conf/settings.json
 
 # Ignore the temp file from upd-ver.bat 
 temp.txt

@@ -64,15 +64,24 @@ def run_summarizer(model: str, input_path: str, output_path: str = None, gui_cal
 
         # Wait for subprocess to finish and get the exit code
         process.wait()
+        
+        # custom exit code to know i already handled this expected error
+        if process.returncode == 42: 
+            error_msg = process.stderr.read().strip()
+            if gui_callback:
+                gui_callback(f"{color.RED}[✗]{color.RESET} Summarization failed")
+            return None
+        
+        # Unhandled error (traceback-worthy)
         if process.returncode != 0:
             error_msg = process.stderr.read().strip()
             if gui_callback:
-                gui_callback(f"{color.RED}[✗]{color.RESET} Summarization failed:\n{error_msg}")
+                gui_callback(f"{color.RED}[✗]{color.RESET} Summarization failed:\n{color.RED}{error_msg}{color.RESET}")
             return None
 
         return "".join(output_lines)
 
     except Exception as e:
         if gui_callback:
-            gui_callback(f"{color.RED}[✗]{color.RESET} Unexpected Error: {e}")
+            gui_callback(f"{color.RED}[✗]{color.RESET} Unexpected Error: {color.RED}{e}{color.RESET}")
         return None

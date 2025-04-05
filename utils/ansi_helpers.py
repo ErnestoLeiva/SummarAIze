@@ -67,7 +67,7 @@ class Printer:
     def error(self, message: str, exit_code: int = 1):
         if self.gui_mode or self.gui_callback:
             print(f"{Symbols.ERROR}{message}")
-            raise Exception(message)
+            sys.exit(42)
         else:
             print(f"{Symbols.ERROR}{message}")
             sys.exit(exit_code)

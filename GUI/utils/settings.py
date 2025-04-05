@@ -9,17 +9,20 @@ from utils.gui_helpers import (
 
 # ===== GLOBALS =====
 MAIN_ICON = "icon.png"
-CUR_DIR = os.path.dirname(__file__)
 DEFAULT_MODEL = "BART"
-SETTINGS_PATH = os.path.join(os.path.dirname(__file__), "..", "conf", "settings.json")
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+SETTINGS_PATH = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "conf", "settings.json"))
+CONFIGS_PATH = os.path.normpath(os.path.join(PROJECT_ROOT, "configs", "model_registry.json"))
+
 DEFAULT_SETTINGS = {
     "Customization": {"theme": "dark"},
     "Options": {"model": "BART", "output_on": False, "width": MIN_WIDTH, "height": MIN_HEIGHT}
 }
-CONFIGS_PATH = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "configs", "model_registry.json"))
 with open(CONFIGS_PATH, "r", encoding="utf-8") as f:
     MODEL_REGISTRY = json.load(f)
     MODEL_CHOICES = list(MODEL_REGISTRY.keys())
+
 
 # ===== FUNCTIONS =====
 def load_settings() -> dict[str, any]:

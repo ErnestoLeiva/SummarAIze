@@ -3,7 +3,7 @@ import threading
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 from themes.others.ttk_scrollbar import ThemedScrolledText
-from utils.settings import load_settings, save_settings, MAIN_ICON, CUR_DIR, DEFAULT_MODEL, MODEL_CHOICES
+from utils.settings import load_settings, save_settings, MAIN_ICON, DEFAULT_MODEL, MODEL_CHOICES
 from utils.gui_helpers import set_icon, set_window_constraints, center_window, MIN_WIDTH, MIN_HEIGHT
 from utils.summarize import run_summarizer
 from utils.theme import get_current_theme, apply_theme, toggle_theme_util
