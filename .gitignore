@@ -175,6 +175,9 @@ cython_debug/
 # Ignore any changes made to GUI settings
 GUI/conf/settings.json
 
+# Ignore adding local model files to repo
+local_models/
+
 # Ignore the temp file from upd-ver.bat 
 temp.txt
 
