@@ -288,9 +288,6 @@ class SummarAIzeGUI(tk.Tk):
         # RESET PROGRESS BAR
         self.progress.stop()
         self.progress.pack_forget()
-        
-        if self.save_to_file.get():
-            messagebox.showinfo("SummarAIze", f"Output saved to: {output_path}")
 
         # Re-enable summarize button
         self.summarize_btn.config(state="normal")
