@@ -14,7 +14,8 @@ def main(args) -> None:
     p: Printer = Printer(no_ansi=args.no_ansi, gui_mode=args.gui_mode)
 
     ### Alert the user that the script is starting 
-    p.normal(f"[v{get_version()} - Using {args.model}]")
+    if not args.gui_mode:
+        p.normal(f"[v{get_version()} - Using {args.model}]")
     p.success(f"SummarAIzing...\n")
 
     ### Check if input file exists and if output directory exists, if not then print error message and exit

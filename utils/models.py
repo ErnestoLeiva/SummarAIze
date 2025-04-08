@@ -100,6 +100,12 @@ class Models:
             tokenizer = AutoTokenizer.from_pretrained(hf_path)
             model = AutoModelForSeq2SeqLM.from_pretrained(hf_path)
 
+            if model.config.decoder_start_token_id is None:
+                if tokenizer.bos_token_id is not None:
+                    model.config.decoder_start_token_id = tokenizer.bos_token_id
+                else:
+                    model.config.decoder_start_token_id = 0  
+
             p.success("Model and tokenizer loaded successfully.")
             return (
                 tokenizer, 
@@ -148,8 +154,10 @@ class Models:
             inputs = tokenizer(
                 text, 
                 return_tensors="pt", 
-                max_length=token_limit, 
-                truncation=True
+                max_length=token_limit,
+                truncation=True,
+                padding="max_length",  # Important for LED
+                pad_to_multiple_of=1024  # Ensure correct padding
             )
 
             # Handle input token length and dynamically adjust generation parameters
@@ -158,11 +166,37 @@ class Models:
 
             # Generate summary
             p.info("Generating summary...")
-            summary_ids = model.generate(
-                inputs["input_ids"],
-                attention_mask=inputs["attention_mask"],
-                **kwargs
-            )
+            if Models.is_led(model):
+                import torch
+                input_ids = inputs["input_ids"]
+                attention_mask = inputs["attention_mask"]
+                if input_ids.dim() == 1:
+                    input_ids = input_ids.unsqueeze(0)
+                    attention_mask = attention_mask.unsqueeze(0)
+
+                global_attention_mask = torch.zeros_like(input_ids)
+                global_attention_mask[:, 0] = 1
+
+                # -- THIS is where you move them to GPU --
+                model.to("cuda")
+                input_ids = input_ids.to("cuda")
+                attention_mask = attention_mask.to("cuda")
+                global_attention_mask = global_attention_mask.to("cuda")
+
+                summary_ids = model.generate(
+                    input_ids=input_ids,
+                    attention_mask=attention_mask,
+                    global_attention_mask=global_attention_mask,
+                    **kwargs
+                )
+            else:
+                summary_ids = model.generate(
+                    inputs["input_ids"],
+                    attention_mask=inputs["attention_mask"],
+                    **kwargs
+                )
+
+
 
             # Decode the summary
             summary = tokenizer.decode(summary_ids[0], skip_special_tokens=True)
@@ -186,27 +220,84 @@ class Models:
             str: The concatenated summarized text chunks.
         """
         try:
-            from concurrent.futures import ThreadPoolExecutor
-            from multiprocessing import cpu_count
+            from concurrent.futures import ThreadPoolExecutor, as_completed
+            import torch
+            
+            def get_safe_max_workers(memory_per_thread_gb=3.0) -> int:
+                """Estimate safe number of concurrent threads based on available GPU memory."""
+                if not torch.cuda.is_available():
+                    return 1
 
+                device = torch.cuda.current_device()
+                total_mem = torch.cuda.get_device_properties(device).total_memory / 1e9  # in GB
+                reserved_mem = torch.cuda.memory_reserved(device) / 1e9
+                allocated_mem = torch.cuda.memory_allocated(device) / 1e9
+                free_mem = total_mem - max(reserved_mem, allocated_mem)
+
+                # Always allow at least 1 thread
+                return max(1, int(free_mem // memory_per_thread_gb))
+
+            MAX_THREADS = get_safe_max_workers() if Models.is_led(model) else 3
 
             decoded_chunks, chunks = Models.split_into_chunks(p, text, tokenizer, token_limit)
 
             def summarize_chunk(i: int, chunk: str) -> str:
                 p.info(f"Summarizing chunk {i + 1}/{len(decoded_chunks)}...")
+
                 inputs = tokenizer(
                     chunk,
                     return_tensors="pt",
                     max_length=token_limit,
-                    truncation=True
+                    truncation=True,
+                    padding="max_length",  # Important for LED
+                    pad_to_multiple_of=1024  # Ensure correct padding
                 )
+
                 chunk_len = inputs["input_ids"].shape[1]
                 kwargs = Models.get_generation_kwargs(chunk_len, token_limit)
-                summary_ids = model.generate(inputs["input_ids"], **kwargs)
+
+                if Models.is_led(model):
+                    input_ids = inputs["input_ids"]
+                    attention_mask = inputs["attention_mask"]
+                    if input_ids.dim() == 1:
+                        input_ids = input_ids.unsqueeze(0)
+                        attention_mask = attention_mask.unsqueeze(0)
+
+                    global_attention_mask = torch.zeros_like(input_ids)
+                    global_attention_mask[:, 0] = 1
+
+                    # Move to GPU
+                    model.to("cuda")
+                    input_ids = input_ids.to("cuda")
+                    attention_mask = attention_mask.to("cuda")
+                    global_attention_mask = global_attention_mask.to("cuda")
+
+                    summary_ids = model.generate(
+                        input_ids=input_ids,
+                        attention_mask=attention_mask,
+                        global_attention_mask=global_attention_mask,
+                        **kwargs
+                    )
+                else:
+                    summary_ids = model.generate(
+                        inputs["input_ids"],
+                        attention_mask=inputs["attention_mask"],
+                        **kwargs
+                    )
+
                 return tokenizer.decode(summary_ids[0], skip_special_tokens=True)
 
-            with ThreadPoolExecutor(max_workers=min(cpu_count(), len(chunks))) as executor:
-                summaries = list(executor.map(lambda i_chunk: summarize_chunk(*i_chunk), enumerate(decoded_chunks)))
+            summaries = []
+            with ThreadPoolExecutor(max_workers=MAX_THREADS) as executor:
+                future_to_index = {
+                    executor.submit(summarize_chunk, i, chunk): i
+                    for i, chunk in enumerate(decoded_chunks)
+                }
+                for future in as_completed(future_to_index):
+                    try:
+                        summaries.append(future.result())
+                    except Exception as e:
+                        p.error(f"Chunk {future_to_index[future]} failed: {str(e)}")
 
             final_summary = "\n\n".join(summaries)
             p.success(f"Text summarized successfully. (Chunk count: {len(summaries)})")
@@ -285,6 +376,16 @@ class Models:
             p.error("Unable to determine model tokenization limit: Invalid/Unknown model")# fallback if for some reason its not in model_registry config
 
     @staticmethod
+    def is_led(model) -> bool:
+        """
+        Determine if selected model is LED model or not \n
+        ***
+        Returns:
+            bool: whether lowercase model name contains 'led' or not
+        """
+        return 'led' in model.__class__.__name__.lower() or 'led' in model.name_or_path.lower()
+
+    @staticmethod
     def get_generation_kwargs(input_len: int, token_limit: int) -> dict:
         """
         Generate the summarization parameters based off the **'summarization.json'** config \n
@@ -308,18 +409,24 @@ class Models:
         """
         
         cfg = Models.CONFIG
-        
+    
         summary_len = int(input_len * cfg["DEFAULT_SUMMARY_RATIO"])
-        summary_len = max(cfg["DEFAULT_MIN_TOKENS"], min(summary_len, token_limit))
+        
+        # Clamp max_length to 1024, and make sure min_length < max_length
+        max_gen_len = min(summary_len, 1024)
+        min_gen_len = min(int(0.7 * summary_len), max_gen_len - 1)
+
         penalty = 1.0 if input_len < cfg["DEFAULT_LENGTH_PENALTY_THRESHOLD"] else 2.0
 
         return {
-            "max_length": summary_len,
-            "min_length": int(0.7 * summary_len),
+            "max_length": max_gen_len,
+            "min_length": min_gen_len,
             "length_penalty": penalty if not cfg["DEFAULT_DO_SAMPLE"] else None,
             "num_beams": cfg["DEFAULT_NUM_BEAMS"] if not cfg["DEFAULT_DO_SAMPLE"] else 1,
             "early_stopping": cfg["DEFAULT_EARLY_STOP"] if not cfg["DEFAULT_DO_SAMPLE"] else False,
             "do_sample": cfg["DEFAULT_DO_SAMPLE"],
             "top_k": cfg["DEFAULT_TOP_K"] if cfg["DEFAULT_DO_SAMPLE"] else None,
             "top_p": cfg["DEFAULT_TOP_P"] if cfg["DEFAULT_DO_SAMPLE"] else None,
+            "repetition_penalty": 1.2,
+            "no_repeat_ngram_size": 3,
         }

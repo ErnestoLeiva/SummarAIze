@@ -31,7 +31,9 @@
 
 ## <a id="overview"></a>📖 Overview
 
-SummarAIze leverages lightweight, pre-trained NLP models such as **T5-Small**, **DistilBART**, and **BART** to perform extractive summarization of legal texts—focusing on contracts. The tool offers a simple command-line interface (CLI) and **runs entirely offline for enhanced privacy and accessibility**.
+SummarAIze leverages lightweight, pre-trained NLP models such as **T5-Small**, **DistilBART**, and **BART**, while also offering fine-tuned variants like **BART-MULTILEXSUM** and **BART-BILLSUM**, specifically trained on legal document datasets. These options allow users to choose between general-purpose or domain-specialized summarization.
+
+The tool provides both a clean command-line interface (CLI) and a user-friendly GUI, and it *runs entirely offline to protect sensitive legal information* and ensure accessibility without requiring cloud services or GPU acceleration.
 
 ## <a id="motivation--objectives"></a>🎯 Motivation & Objectives
 
@@ -53,11 +55,11 @@ Legal documents are notoriously lengthy and complex. SummarAIze was created to:
 - **⚖️ Key Term Identification:**
   - Highlights frequently occurring legal terms and clauses.
 - **🔧 Modular Design:**
-  - Built as a command-line tool with future enhancements in mind.
+  - Modular architecture built for extensibility. It started as a CLI tool, now includes a GUI with room for future enhancements.
 - **📄 Format Support:**
-  - Initially supports plain text (.txt) files with plans for support of more file types in the future.
+  - Supports plain text (.txt), Word (.docx), and PDF (.pdf) files, with a modular architecture designed to easily support additional file types in the future.
 - **💻 Offline Processing:**
-  - Runs locally on standard hardware *without* the need for a GPU.
+  - No internet or GPU needed. SummarAIze runs locally to ensure privacy for sensitive legal content.
 
 ## <a id="installation"></a>💾 Installation
 
@@ -77,21 +79,18 @@ cd SummarAIze
 
 You can install the required dependencies using one of the following methods:
 
-#### - Option 1: Using pip
-![STANDARD](https://img.shields.io/badge/Universal%20(Mac%2FLinux%2FWindows)-gray?style=plastic&label=STANDARD&labelColor=blue)
+#### - Option 1: Using pip ![STANDARD](https://img.shields.io/badge/Universal%20(Mac%2FLinux%2FWindows)-gray?style=plastic&label=STANDARD&labelColor=blue)
 
 ```bash
 pip install -r requirements.txt
 ```
 
-#### - Option 2: Windows Installation Option (Using rqinst.bat)
+#### - Option 2: **Windows** Installation Option (Using rqinst.bat)
 
-- **Double-Click Method**
-![EASIEST](https://img.shields.io/badge/Windows%20Only*-gray?style=plastic&label=EASIEST&labelColor=brightgreen)
-  - If you prefer not to use the terminal, simply **double-click** the `rqinst.bat` file in File Explorer. The script will launch and guide you through the installation process interactively.
+- **Double-Click Method** ![EASIEST](https://img.shields.io/badge/Windows%20Only*-gray?style=plastic&label=EASIEST&labelColor=brightgreen)
+  - If you prefer not to use the terminal, simply **double-click** the `rqinst.bat` file in File Explorer. The script will launch and guide you through the installation process.
   
-- **Using Visual Studio Code Terminal:**
-![MANUAL](https://img.shields.io/badge/Windows%20Only*-gray?style=plastic&label=MANUAL&labelColor=orange)
+- **Using Visual Studio Code Terminal:** ![MANUAL](https://img.shields.io/badge/Windows%20Only*-gray?style=plastic&label=MANUAL&labelColor=orange)
   1. **Run Visual Studio Code as Administrator.**
   2. Open the integrated terminal.
   3. Run the following command:
@@ -159,16 +158,16 @@ python ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.t
   - ~~Focus on plain text (.txt) files with clear formatting guidelines.~~
 - ~~**⌨️ CLI Implementation:**~~ ✅
   - ~~Allow users to input file paths and specify model.~~
-- **🔑 Key Term Identification:**
-  - Highlight and list frequently occurring legal terms.
+- ~~**🔑 Key Term Identification:**~~ ✅
+  - ~~Highlight and list frequently occurring legal terms.~~
 
 ### 📅 Milestones
 
 - ~~**Week 1:** Set up the repository, install dependencies, and test NLP models with sample legal texts.~~ ✅
 - ~~**Week 2:** Develop the basic summarization module with sentence extraction.~~ ✅
-- ~~**Week 3:** Integrate key term identification and summary length customization.~~ 📝 ***under review***
-- ~~**Week 4:** Finalize the CLI and improve text preprocessing for legal documents.~~ 📝 ***under review***
-- ~~**Week 5:** Test with sample contracts and refine summary quality.~~ 📝 ***under review***
+- ~~**Week 3:** Integrate key term identification and summary length customization.~~ 📝 ***length customization omitted***
+- ~~**Week 4:** Finalize the CLI and improve text preprocessing for legal documents.~~ ✅
+- ~~**Week 5:** Test with sample contracts and refine summary quality.~~ ✅
 - **Week 6:** Complete documentation and prepare for the project demonstration.
 
 ### 🔮 Future Enhancements
@@ -177,8 +176,8 @@ python ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.t
   - ~~Expand support to additional file formats (PDF, DOCX).~~
 - ~~**🏛️ Document Type Expansion:**~~ ✅
   - ~~Broaden to other legal document types (e.g., court opinions, regulations).~~
-- **⚖️ Advanced Legal Clause Identification:**
-  - Enhance identification of critical legal clauses.
+- ~~**⚖️ Advanced Legal Clause Identification:**~~ ✅
+  - ~~Enhance identification of critical legal clauses.~~
 - ~~**🖥️ GUI Development:**~~ ✅
   - ~~Develop a graphical user interface for a more user-friendly experience.~~
 

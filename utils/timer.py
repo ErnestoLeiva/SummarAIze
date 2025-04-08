@@ -24,10 +24,17 @@ class Timer:
     
     def __exit__(self,  exc_type, exc_value, traceback) -> bool:
         elapsed = time.time() - self.start_time
-        if not self.gui_mode and not self.no_ansi:
-            self.printer.timer(f"[{self.task_name}] completed in {col.YELLOW}{elapsed:.2f}s{col.RESET}\n")
-        elif not self.gui_mode and self.no_ansi:
-            print(f"[{self.task_name}] completed in {elapsed:.2f}s\n")
+        
+        # Format time
+        if elapsed < 60:
+            formatted = f"{elapsed:.2f}s"
         else:
-            pass  # placeholder for GUI mode
+            minutes = int(elapsed // 60)
+            seconds = elapsed % 60
+            formatted = f"{minutes}m {seconds:.2f}s"
+        
+        if not self.no_ansi:
+            self.printer.timer(f"[{self.task_name}] completed in {col.YELLOW}{formatted}{col.RESET}\n")
+        else:
+            print(f"[{self.task_name}] completed in {formatted}\n")
         return False # do not suppress exceptions

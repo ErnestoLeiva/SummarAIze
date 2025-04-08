@@ -14,8 +14,18 @@
       "task": "translation",
       "token_limit": 512
     },
-    "LEGAL-BART": {
-      "hf_path": "local_models/finetuned-legal-bart",
+    "LEGAL-BART-BILLSUM": {
+      "hf_path": "local_models/legal-bart-billsum",
+      "task": "summarization",
+      "token_limit": 1024
+    },
+    "LEGAL-LED-MULTILEXSUM": {
+      "hf_path": "local_models/legal-led-multilexsum",
+      "task": "summarization",
+      "token_limit": 16384
+    },
+    "DEBUG-TEST": {
+      "hf_path": "local_models/nonexisting",
       "task": "summarization",
       "token_limit": 1024
     }
