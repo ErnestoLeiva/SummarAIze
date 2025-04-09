@@ -8,7 +8,7 @@ CONFIG_PATH = os.path.join(PROJECT_ROOT, "configs", "supported_files.json")
 with open(CONFIG_PATH, "r", encoding="utf-8") as f:
     SUPPORTED_FILES_MAP: dict[str, str] = json.load(f)
 
-def is_supported_file_extension(p: Printer, path: str) -> tuple[bool, str]:
+def is_supported_file_extension(p: Printer, path: str, is_output: bool = False) -> tuple[bool, str]:
     """
     Verify extension is compatible with the projects requirements. \n
     ***
@@ -23,7 +23,9 @@ def is_supported_file_extension(p: Printer, path: str) -> tuple[bool, str]:
     if ext not in SUPPORTED_FILES_MAP:
         p.warning(f"Supported file types are: {', '.join(SUPPORTED_FILES_MAP)}")
         p.error(f"Input File type not supported: '{ext}'")
-        # no return needed since error calls sys.exit(1)
+    elif is_output:
+        if ext != ".txt":
+            return False, ext
     
     return True, ext
 
@@ -82,17 +84,22 @@ def verify_output_path(p: Printer, file_path: str) -> str:
             alt_directory = os.path.dirname(alt_path)
             if os.path.isdir(alt_directory):
                 #p.success(f"Output directory found: {os.path.dirname(alt_path)}\n")
-                supported, ext = is_supported_file_extension(p, alt_path)
+                supported, ext = is_supported_file_extension(p, alt_path, True)
                 if supported:
                     return alt_path
+                else:
+                    p.error(f"Unsupported output file extension {ext}")
             else:
                 p.error(f"Output directory not found: {output_directory} | {alt_directory}")
         
         # Here the normalized path worked, meaning directory exists
         else:
             #p.success(f"Output directory verified: {output_directory}\n")
-            if is_supported_file_extension(p, output_path):
+            supported, ext = is_supported_file_extension(p, output_path, True)
+            if supported:
                 return output_path
+            else:
+                p.error(f"Unsupported output file extension {ext}")
 
     except Exception as e:
         p.error(f"Error verifying output path: {str(e)}")
