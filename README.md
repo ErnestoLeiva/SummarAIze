@@ -125,19 +125,19 @@ py ai-sum.py --help
 #### • Input flag using test file 'roman.txt'
 
 ``` bash
-py ai-sum.py --summarize /test_files/roman.txt
+py ai-sum.py --summarize /test_files/debug/roman.txt
 ```
 
 #### • Input & Output flags using the test file 'roman.txt'
 
 ``` bash
-py ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.txt
+py ai-sum.py --summarize /test_files/debug/roman.txt --output /test_files/output.txt
 ```
 
 #### • Input & Output & Model flags using the test file 'roman.txt'
 
 ``` bash
-py ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.txt --model distilbart
+py ai-sum.py --summarize /test_files/debug/roman.txt --output /test_files/output.txt --model distilbart
 ```
 
 ### 🔹 GUI Example
