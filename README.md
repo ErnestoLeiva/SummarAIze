@@ -31,7 +31,7 @@
 
 ## <a id="overview"></a>📖 Overview
 
-SummarAIze leverages lightweight, pre-trained NLP models such as **T5-Small**, **DistilBART**, and **BART**, while also offering fine-tuned variants like **BART-MULTILEXSUM** and **BART-BILLSUM**, specifically trained on legal document datasets. These options allow users to choose between general-purpose or domain-specialized summarization.
+SummarAIze leverages lightweight, pre-trained NLP models such as **T5-Small**, **DistilBART**, and **BART**, while also offering fine-tuned variants like **BART-BILLSUM** and **LED-MULTILEXSUM**, specifically trained on legal document datasets. These options allow users to choose between general-purpose or domain-specialized summarization.
 
 The tool provides both a clean command-line interface (CLI) and a user-friendly GUI, and it *runs entirely offline to protect sensitive legal information* and ensure accessibility without requiring cloud services or GPU acceleration.
 
@@ -146,8 +146,6 @@ python ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.t
 
 <img src="https://i.imgur.com/DcKFcjH.png" alt="summarAIze"><br />
 
-
-
 ## <a id="roadmap--milestones"></a>🚀 Roadmap & Milestones
 
 ### 🎯 Immediate Objectives
@@ -168,7 +166,7 @@ python ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.t
 - ~~**Week 3:** Integrate key term identification and summary length customization.~~ 📝 ***length customization omitted***
 - ~~**Week 4:** Finalize the CLI and improve text preprocessing for legal documents.~~ ✅
 - ~~**Week 5:** Test with sample contracts and refine summary quality.~~ ✅
-- **Week 6:** Complete documentation and prepare for the project demonstration.
+- ~~**Week 6:** Complete documentation and prepare for the project demonstration.~~ ✅
 
 ### 🔮 Future Enhancements
 
