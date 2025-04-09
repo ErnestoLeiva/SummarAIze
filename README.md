@@ -106,10 +106,10 @@ pip install -r requirements.txt
 
 ## <a id="usage"></a>🏃‍♂️ Usage
 
-The basic usage of the tool via the command-line is as follows:
+The basic, bare minimum usage of the tool via the command-line is as follows:
 
 ``` bash
-python ai-sum.py --summarize "../PATH/TO/FILE"
+py ai-sum.py --summarize "../PATH/TO/FILE"
 ```
 
 ### 🔹 CLI Examples
@@ -119,25 +119,25 @@ python ai-sum.py --summarize "../PATH/TO/FILE"
 <img src="https://i.imgur.com/iaetR92.png" alt="summarAIze"><br />
 
 ``` bash
-python ai-sum.py --help
+py ai-sum.py --help
 ```
 
-#### Example: Input flag using test file 'roman.txt'
+#### • Input flag using test file 'roman.txt'
 
 ``` bash
-python ai-sum.py --summarize /test_files/roman.txt
+py ai-sum.py --summarize /test_files/roman.txt
 ```
 
-#### Example: Input & Output flags using the test file 'roman.txt'
+#### • Input & Output flags using the test file 'roman.txt'
 
 ``` bash
-python ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.txt
+py ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.txt
 ```
 
-#### Example: Input & Output & Model flags using the test file 'roman.txt'
+#### • Input & Output & Model flags using the test file 'roman.txt'
 
 ``` bash
-python ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.txt --model distilbart
+py ai-sum.py --summarize /test_files/roman.txt --output /test_files/output.txt --model distilbart
 ```
 
 ### 🔹 GUI Example
