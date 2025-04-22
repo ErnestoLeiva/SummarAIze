@@ -1,6 +1,6 @@
 <div align="center">
     <h1>SummarAIze 🤖✨</br>
-      <img src="https://img.shields.io/github/package-json/v/ErnestoLeiva/SummarAIze?style=plastic&label=🔖 Version&color=orange&cacheSeconds=60" alt="Version#" >
+      <img src="https://img.shields.io/github/package-json/v/ErnestoLeiva/SummarAIze?style=plastic&label=%F0%9F%94%96%20Version&color=orange&cacheSeconds=60" alt="Version#" >
       <img src="https://img.shields.io/badge/Python_+_Tkinter-Backend_+_Front--end-green?style=plastic&logo=python&logoColor=%233776AB" alt="Python">
       <img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Transformers-blue?style=plastic" alt="Hugging Face">
       <img src="https://img.shields.io/badge/%F0%9F%A4%97_Model-BART-purple?style=plastic" alt="BART">
