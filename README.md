@@ -1,5 +1,6 @@
 <div align="center">
-    <h1>SummarAIze 🤖✨</br>
+      <img src="https://raw.githubusercontent.com/ErnestoLeiva/SummarAIze/refs/heads/main/GUI/icons/icon_ORIGINAL.png" alt="Logo" width="420" >  
+      <h1>SummarAIze 🤖✨</br>
       <img src="https://img.shields.io/github/package-json/v/ErnestoLeiva/SummarAIze?style=plastic&label=%F0%9F%94%96%20Version&color=orange&cacheSeconds=60" alt="Version#" >
       <img src="https://img.shields.io/badge/Python_+_Tkinter-Backend_+_Front--end-green?style=plastic&logo=python&logoColor=%233776AB" alt="Python">
       <img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Transformers-blue?style=plastic" alt="Hugging Face">
@@ -14,7 +15,7 @@
       <img src="https://img.shields.io/badge/💻_IDE-Visual_Studio_Code-0078d7.svg?style=plastic&logo=visual-studio-code&logoColor=white" alt="Visual Studio Code IDE">
     </h1>
 
-**SummarAIze** is an AI-powered legal document summarization tool built in Python. Designed to help legal professionals, students, and researchers quickly extract key information from long contracts and legal texts, SummarAIze runs entirely offline and is built with a modular architecture for future expansion.
+**SummarAIze** is an AI-powered legal document summarization tool built in Python. Designed to help users quickly extract key information from long contracts and legal texts, SummarAIze runs entirely offline and is built with a modular architecture for future expansion.
 </div>
 
 ## 📚 Table of Contents
