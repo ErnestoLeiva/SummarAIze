@@ -40,43 +40,43 @@ The tool provides both a clean command-line interface (CLI) and a user-friendly 
 
 Legal documents are notoriously lengthy and complex. SummarAIze was created to:
 
-- **📚 Summarize Legal Texts:**
+- **Summarize Legal Texts:**
   - Quickly condense contracts into clear, concise summaries.
-- **🔑 Highlight Key Terms:**
+- **Highlight Key Terms:**
   - Identify and display important legal terms to aid understanding.
-- **🔒 Maintain Privacy:**
+- **Maintain Privacy:**
   - Operate offline so that sensitive legal data remains secure.
-- **🧩 Establish a Modular Foundation:**
+- **Establish a Modular Foundation:**
   - Enable future enhancements such as multi-format support and a graphical interface.
 
 ## <a id="features"></a>✨ Features
 
-- **📝 Legal Document Summarization:**
+- **Legal Document Summarization:**
   - Extracts key sentences from contracts and legal texts.
-- **⚖️ Key Term Identification:**
+- **Key Term Identification:**
   - Highlights frequently occurring legal terms and clauses.
-- **🔧 Modular Design:**
+- **Modular Design:**
   - Modular architecture built for extensibility. It started as a CLI tool, now includes a GUI with room for future enhancements.
-- **📄 Format Support:**
+- **Format Support:**
   - Supports plain text (.txt), Word (.docx), and PDF (.pdf) files, with a modular architecture designed to easily support additional file types in the future.
-- **💻 Offline Processing:**
+- **Offline Processing:**
   - No internet or GPU needed. SummarAIze runs locally to ensure privacy for sensitive legal content.
 
 ## <a id="installation"></a>💾 Installation
 
-### 🔹 Prerequisites
+### Prerequisites
 
 - Python 3.9+
 - [pip](https://pip.pypa.io/en/stable/)
 
-### 🔹 Clone the Repository
+### Clone the Repository
 
 ```bash
 git clone https://github.com/ErnestoLeiva/SummarAIze.git
 cd SummarAIze
 ```
 
-### 🔹 Install Dependencies
+### Install Dependencies
 
 You can install the required dependencies using one of the following methods:
 
@@ -123,19 +123,19 @@ py ai-sum.py --summarize "../PATH/TO/FILE"
 py ai-sum.py --help
 ```
 
-#### • Input flag using test file 'roman.txt'
+#### • Input flag
 
 ``` bash
 py ai-sum.py --summarize /test_files/debug/roman.txt
 ```
 
-#### • Input & Output flags using the test file 'roman.txt'
+#### • Input & Output flags
 
 ``` bash
 py ai-sum.py --summarize /test_files/debug/roman.txt --output /test_files/output.txt
 ```
 
-#### • Input & Output & Model flags using the test file 'roman.txt'
+#### • Input & Output & Model flags
 
 ``` bash
 py ai-sum.py --summarize /test_files/debug/roman.txt --output /test_files/output.txt --model distilbart
@@ -143,7 +143,7 @@ py ai-sum.py --summarize /test_files/debug/roman.txt --output /test_files/output
 
 ### 🔹 GUI Example
 
-#### All the GUI features are visible from the main window, featured in the image below
+#### All the GUI features are visible from the main window, shown in the image below
 
 <img src="https://i.imgur.com/DcKFcjH.png" alt="summarAIze"><br />
 
@@ -151,13 +151,13 @@ py ai-sum.py --summarize /test_files/debug/roman.txt --output /test_files/output
 
 ### 🎯 Immediate Objectives
 
-- ~~**🛠️ Core Summarization Engine:**~~ ✅
+- ~~**Core Summarization Engine:**~~ ✅
   - ~~Implement extractive summarization using T5-Small/DistilBART/BART.~~
-- ~~**📄 Text Format Support:**~~ ✅
+- ~~**Text Format Support:**~~ ✅
   - ~~Focus on plain text (.txt) files with clear formatting guidelines.~~
-- ~~**⌨️ CLI Implementation:**~~ ✅
+- ~~**CLI Implementation:**~~ ✅
   - ~~Allow users to input file paths and specify model.~~
-- ~~**🔑 Key Term Identification:**~~ ✅
+- ~~**Key Term Identification:**~~ ✅
   - ~~Highlight and list frequently occurring legal terms.~~
 
 ### 📅 Milestones
@@ -171,29 +171,29 @@ py ai-sum.py --summarize /test_files/debug/roman.txt --output /test_files/output
 
 ### 🔮 Future Enhancements
 
-- ~~**📑 Additional Format Support:**~~ ✅
+- ~~**Additional Format Support:**~~ ✅
   - ~~Expand support to additional file formats (PDF, DOCX).~~
-- ~~**🏛️ Document Type Expansion:**~~ ✅
+- ~~**Document Type Expansion:**~~ ✅
   - ~~Broaden to other legal document types (e.g., court opinions, regulations).~~
-- ~~**⚖️ Advanced Legal Clause Identification:**~~ ✅
+- ~~**Advanced Legal Clause Identification:**~~ ✅
   - ~~Enhance identification of critical legal clauses.~~
-- ~~**🖥️ GUI Development:**~~ ✅
+- ~~**GUI Development:**~~ ✅
   - ~~Develop a graphical user interface for a more user-friendly experience.~~
 
 ## <a id="maintenance"></a>⚒️ Maintenance
 
 ### Developer Responsibilities
 
-- **📦 Versioning:**  
+- **Versioning:**  
   - Use `upd-ver.bat` windows script or `npm version <type>` terminal command to manage semantic versioning (Patch/Minor/Major/Custom).
   - Update versions after significant changes and coordinate with the team.
-- **🔍 Code Revisions:**  
+- **Code Revisions:**  
   - Review your code for scalability, conflict prevention, and efficiency before pushing changes.
-- **🔗 Consistency:**  
+- **Consistency:**  
   - Follow established formatting, naming conventions, and folder structures.
-- **🌿 Branching & Contributions:**  
+- **Branching & Contributions:**  
   - Always pull the latest `main` before starting work, commit incrementally, and resolve conflicts before merging.
-- **📚 Documentation:**  
+- **Documentation:**  
   - Update the README, code comments, and roadmap as needed.
 
 ## <a id="license"></a>📝 License
